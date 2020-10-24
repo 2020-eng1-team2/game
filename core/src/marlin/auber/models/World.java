@@ -1,12 +1,12 @@
 package marlin.auber.models;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class World {
-    public OrthographicCamera camera;
+    public Viewport viewport;
 
     public World() {
-        this.camera = new OrthographicCamera();
+        this.viewport = new ExtendViewport(10, 10);
     }
 }

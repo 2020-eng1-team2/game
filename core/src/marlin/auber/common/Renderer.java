@@ -1,7 +1,7 @@
 package marlin.auber.common;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public interface Renderer {
-    void tick(Batch batch);
+    void tick(SpriteBatch batch);
 }
