@@ -37,6 +37,12 @@ public class AuberRenderer implements Renderer, GuiRenderer {
                     10,
                     18
             );
+            Assets.fonts.fixedsys18.draw(
+                    batch,
+                    "FPS = " + Gdx.graphics.getFramesPerSecond(),
+                    10,
+                    36
+            );
         }
     }
 }
