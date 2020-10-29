@@ -21,8 +21,8 @@ public class AuberRenderer implements Renderer, GuiRenderer {
     public void render(SpriteBatch batch) {
         batch.draw(
                 this.auberTexture,
-                this.auber.position.x,
-                this.auber.position.y,
+                this.auber.position.x,// JJ TEST (Move bottom Walls to top render layer, leave tiles where they are)
+                this.auber.position.y - (Auber.HEIGHT/3),// JJ TEST
                 Auber.WIDTH,
                 Auber.HEIGHT
         );
