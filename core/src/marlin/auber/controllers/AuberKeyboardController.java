@@ -36,7 +36,7 @@ public class AuberKeyboardController implements Controller {
         delta.scl(auber.movementSpeed * Gdx.graphics.getDeltaTime());
         // Check collision
         // Note that we check collision with the *middle* of the character
-        futurePositionTest.add(Auber.WIDTH / 2, 0);
+        futurePositionTest.add(Auber.WIDTH / 2, Auber.HEIGHT/3);
         futurePositionTest.add(delta);
         if (auber.world.map.inBounds(futurePositionTest)) {
             // And move Auber

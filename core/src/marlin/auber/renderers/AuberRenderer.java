@@ -21,8 +21,8 @@ public class AuberRenderer implements Renderer, GuiRenderer {
     public void render(SpriteBatch batch) {
         batch.draw(
                 this.auberTexture,
-                this.auber.position.x,// JJ TEST (Add bottom Walls to top render layer)
-                this.auber.position.y - (Auber.HEIGHT/3),// JJ TEST (For Oxygen walls, maybe check if player y coord is less than the y coord of the walls & draw on top layer if necessary)
+                this.auber.position.x,
+                this.auber.position.y,
                 Auber.WIDTH,
                 Auber.HEIGHT
         );
