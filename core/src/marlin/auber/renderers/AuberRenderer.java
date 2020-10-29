@@ -23,8 +23,8 @@ public class AuberRenderer implements Renderer, GuiRenderer {
                 this.auberTexture,
                 this.auber.position.x,
                 this.auber.position.y,
-                0.6f,
-                1.8f
+                Auber.WIDTH,
+                Auber.HEIGHT
         );
     }
 

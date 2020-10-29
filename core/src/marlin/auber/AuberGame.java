@@ -10,8 +10,10 @@ import marlin.auber.common.GuiRenderer;
 import marlin.auber.common.Renderer;
 import marlin.auber.controllers.AuberKeyboardController;
 import marlin.auber.models.Auber;
+import marlin.auber.models.Map;
 import marlin.auber.models.World;
 import marlin.auber.renderers.AuberRenderer;
+import marlin.auber.renderers.MapBaseRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,30 +29,40 @@ public class AuberGame extends ApplicationAdapter {
 
 	SpriteBatch batch;
 	SpriteBatch guiBatch;
-	Texture img;
 	
 	@Override
 	public void create () {
-		this.world = new World();
+		this.world = new World(
+				Map.loadMap(Gdx.files.internal("maps/map1/map1.json"))
+		);
 		this.auber = new Auber(this.world);
 		activeControllers.add(new AuberKeyboardController(this.auber));
 		AuberRenderer auberRenderer = new AuberRenderer(this.auber);
+
+		activeRenderers.add(new MapBaseRenderer(this.world));
 		activeRenderers.add(auberRenderer);
+
 		activeGuiRenderers.add(auberRenderer);
+
 		batch = new SpriteBatch();
 		guiBatch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
 	}
 
 	@Override
 	public void render () {
+		// Tick the controllers
 		for (Controller controller : this.activeControllers) {
 			controller.tick();
 		}
+		// Clear the screen
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		// Set the camera to Auber and apply it to OpenGL
+		this.world.viewport.getCamera().position.x = this.auber.position.x;
+		this.world.viewport.getCamera().position.y = this.auber.position.y;
 		this.world.viewport.apply();
 		batch.setProjectionMatrix(this.world.viewport.getCamera().combined);
+		// Render!
 		batch.begin();
 		for (Renderer renderer : this.activeRenderers) {
 			renderer.render(batch);
@@ -73,6 +85,6 @@ public class AuberGame extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
+		guiBatch.dispose();
 	}
 }

@@ -9,6 +9,7 @@ import marlin.auber.models.Auber;
 public class AuberKeyboardController implements Controller {
     private final Auber auber;
     private final Vector2 delta = new Vector2(0, 0);
+    private final Vector2 futurePositionTest = new Vector2(0, 0);
 
     public AuberKeyboardController(Auber auber) {
         this.auber = auber;
@@ -18,6 +19,7 @@ public class AuberKeyboardController implements Controller {
     public void tick() {
         // Reset delta
         delta.set(0, 0);
+        futurePositionTest.set(auber.position.x, auber.position.y);
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             delta.y += 1;
         }
@@ -32,7 +34,13 @@ public class AuberKeyboardController implements Controller {
         }
         // Scale it by movement speed and delta time
         delta.scl(auber.movementSpeed * Gdx.graphics.getDeltaTime());
-        // And move Auber
-        auber.position = auber.position.add(delta);
+        // Check collision
+        // Note that we check collision with the *middle* of the character
+        futurePositionTest.add(Auber.WIDTH / 2, 0);
+        futurePositionTest.add(delta);
+        if (auber.world.map.inBounds(futurePositionTest)) {
+            // And move Auber
+            auber.position = auber.position.add(delta);
+        }
     }
 }

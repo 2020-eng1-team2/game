@@ -1,8 +1,8 @@
 {
-  "name": "map1",
-  "mapTexture": "map1.png",
-  "topcoatTexture": "map1-topcoat.png",
-  "collisionTexture": "map1-collision.png",
-  "width": 200,
-  "height": 150
+  "mapTexture": "maps/map1/map1.png",
+  "topcoatTexture": "maps/map1/map1-topcoat.png",
+  "collisionTexture": "maps/map1/map1-collision.png",
+  "width": 57,
+  "height": 71,
+  "auberSpawn": [46, 49]
 }

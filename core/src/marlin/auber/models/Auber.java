@@ -11,8 +11,11 @@ public class Auber {
      */
     public float movementSpeed = 3f;
 
+    public static final float WIDTH = 0.8f;
+    public static final float HEIGHT = 1.8f;
+
     public Auber(World world) {
         this.world = world;
-        this.position = Vector2.Zero;
+        this.position = new Vector2(world.map.auberSpawn);
     }
 }
