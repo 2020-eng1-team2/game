@@ -1,0 +1,8 @@
+{
+  "name": "map1",
+  "mapTexture": "map1.png",
+  "topcoatTexture": "map1-topcoat.png",
+  "collisionTexture": "map1-collision.png",
+  "width": 200,
+  "height": 150
+}
