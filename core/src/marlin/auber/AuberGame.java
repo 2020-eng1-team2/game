@@ -14,6 +14,7 @@ import marlin.auber.models.Map;
 import marlin.auber.models.World;
 import marlin.auber.renderers.AuberRenderer;
 import marlin.auber.renderers.MapBaseRenderer;
+import marlin.auber.renderers.MapTopRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class AuberGame extends ApplicationAdapter {
 
 		activeRenderers.add(new MapBaseRenderer(this.world));
 		activeRenderers.add(auberRenderer);
+		activeRenderers.add(new MapTopRenderer(this.world));
 
 		activeGuiRenderers.add(auberRenderer);
 
