@@ -17,6 +17,10 @@ public class AuberKeyboardController implements Controller {
 
     @Override
     public void tick() {
+        // Debug
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F9)) {
+            System.out.println("Set a breakpoint here!");
+        }
         // Reset delta
         delta.set(0, 0);
         futurePositionTest.set(auber.position.x, auber.position.y);

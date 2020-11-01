@@ -9,10 +9,13 @@ import marlin.auber.common.Controller;
 import marlin.auber.common.GuiRenderer;
 import marlin.auber.common.Renderer;
 import marlin.auber.controllers.AuberKeyboardController;
+import marlin.auber.controllers.InfiltratorAIController;
 import marlin.auber.models.Auber;
+import marlin.auber.models.Infiltrator;
 import marlin.auber.models.Map;
 import marlin.auber.models.World;
 import marlin.auber.renderers.AuberRenderer;
+import marlin.auber.renderers.InfiltratorRenderer;
 import marlin.auber.renderers.MapBaseRenderer;
 import marlin.auber.renderers.MapTopRenderer;
 
@@ -37,11 +40,20 @@ public class AuberGame extends ApplicationAdapter {
 				Map.loadMap(Gdx.files.internal("maps/map1/map1.json"))
 		);
 		this.auber = new Auber(this.world);
+
 		activeControllers.add(new AuberKeyboardController(this.auber));
+
 		AuberRenderer auberRenderer = new AuberRenderer(this.auber);
 
 		activeRenderers.add(new MapBaseRenderer(this.world));
 		activeRenderers.add(auberRenderer);
+
+		for (int i = 0; i < 10; i++) {
+			Infiltrator boris = new Infiltrator(this.world);
+			activeControllers.add(new InfiltratorAIController(boris));
+			activeRenderers.add(new InfiltratorRenderer(boris));
+		}
+
 		activeRenderers.add(new MapTopRenderer(this.world));
 
 		activeGuiRenderers.add(auberRenderer);

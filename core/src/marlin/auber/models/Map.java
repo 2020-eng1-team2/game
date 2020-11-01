@@ -155,7 +155,7 @@ public class Map implements Json.Serializable {
 
         // Avoid doing A* if we don't need to
         if (navMesh.get(nearestToStart.name).links.contains(nearestToTarget)) {
-            return Arrays.asList(from, nearestToStart.position, nearestToTarget.position, target);
+            return new ArrayList<>(Arrays.asList(from, nearestToStart.position, nearestToTarget.position, target));
         }
 
         // Now we do good old A* pathfinding between the nearests

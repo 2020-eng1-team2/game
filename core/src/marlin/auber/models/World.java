@@ -12,6 +12,6 @@ public class World {
 
     public World(Map map) {
         this.map = map;
-        this.viewport = new ExtendViewport(15, 15);
+        this.viewport = new ExtendViewport(20, 20);
     }
 }
