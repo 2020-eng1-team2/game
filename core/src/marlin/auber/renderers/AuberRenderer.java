@@ -18,8 +18,8 @@ public class AuberRenderer implements Renderer, GuiRenderer {
     private final AnimSheet walkLeft;
 
     public AuberRenderer(Auber auber) {
-          this.auber = auber;
-          this.walkLeft = AnimSheet.create(Gdx.files.internal("graphics/auberWalkLeft.json"));
+        this.auber = auber;
+        this.walkLeft = AnimSheet.create(Gdx.files.internal("graphics/auberWalkLeft.json"));
     }
 
     @Override

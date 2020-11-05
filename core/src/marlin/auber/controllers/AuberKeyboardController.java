@@ -92,13 +92,18 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                     mapTop = screenCentreY + (scaledMapHeight / 2);
 //                }
 
+                // JJs Code VVV
+                float drawHeight = screenHeight * 0.8f;
+                float drawWidth = drawHeight * (mapTexWidth / mapTexHeight);
+                Gdx.app.log("draw dimensions", "drawHeight = " + Float.toString(drawHeight) + ", drawWidth = " + Float.toString(drawWidth));
                 batch.draw(
-                    auber.world.map.mapTexture,
-                        mapLeft,
-                        mapBot,
-                        mapRight - mapLeft,
-                        mapTop - mapBot
+                        auber.world.map.mapTexture,
+                        (screenWidth/2f) - (drawWidth/2f),
+                        screenHeight * 0.1f,
+                        drawWidth,
+                        drawHeight
                 );
+
                 Assets.fonts.fixedsys18.draw(
                         batch,
                         "Click to teleport",
