@@ -3,9 +3,10 @@ package marlin.auber;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import marlin.auber.common.Controller;
+import marlin.auber.common.DebugRenderer;
 import marlin.auber.common.GuiRenderer;
 import marlin.auber.common.Renderer;
 import marlin.auber.controllers.AuberKeyboardController;
@@ -30,9 +31,11 @@ public class AuberGame extends ApplicationAdapter {
 
 	List<Renderer> activeRenderers = new ArrayList<>();
 	List<GuiRenderer> activeGuiRenderers = new ArrayList<>();
+	List<DebugRenderer> activeDebugRenderers = new ArrayList<>();
 
 	SpriteBatch batch;
 	SpriteBatch guiBatch;
+	ShapeRenderer debugShapeRenderer;
 	
 	@Override
 	public void create () {
@@ -50,7 +53,9 @@ public class AuberGame extends ApplicationAdapter {
 
 		for (int i = 0; i < 10; i++) {
 			Infiltrator boris = new Infiltrator(this.world);
-			activeControllers.add(new InfiltratorAIController(boris));
+			InfiltratorAIController ai = new InfiltratorAIController(boris);
+			activeControllers.add(ai);
+			activeDebugRenderers.add(ai);
 			activeRenderers.add(new InfiltratorRenderer(boris));
 		}
 
@@ -58,8 +63,12 @@ public class AuberGame extends ApplicationAdapter {
 
 		activeGuiRenderers.add(auberRenderer);
 
+		activeDebugRenderers.add(this.world.map);
+
 		batch = new SpriteBatch();
 		guiBatch = new SpriteBatch();
+		debugShapeRenderer = new ShapeRenderer();
+		debugShapeRenderer.setAutoShapeType(true);
 	}
 
 	@Override
@@ -82,6 +91,16 @@ public class AuberGame extends ApplicationAdapter {
 			renderer.render(batch);
 		}
 		batch.end();
+		// Draw debug
+		if (this.world.debugMode) {
+			this.debugShapeRenderer.setProjectionMatrix(this.world.viewport.getCamera().combined);
+			Gdx.gl.glLineWidth(4f);
+			this.debugShapeRenderer.begin();
+			for (DebugRenderer renderer : this.activeDebugRenderers) {
+				renderer.renderDebug(this.debugShapeRenderer);
+			}
+			this.debugShapeRenderer.end();
+		}
 		// Reset viewport for GUI
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		guiBatch.begin();

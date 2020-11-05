@@ -1,13 +1,16 @@
 package marlin.auber.controllers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import marlin.auber.common.Controller;
+import marlin.auber.common.DebugRenderer;
 import marlin.auber.models.Infiltrator;
 
 import java.util.List;
 
-public class InfiltratorAIController implements Controller {
+public class InfiltratorAIController implements Controller, DebugRenderer {
     private final Infiltrator infiltrator;
 
     private Vector2 target;
@@ -32,7 +35,8 @@ public class InfiltratorAIController implements Controller {
             } while (!this.infiltrator.world.map.inBounds(newTarget));
             this.target = newTarget;
             this.path = this.infiltrator.world.map.findPathTo(this.infiltrator.position, this.target);
-            this.next = path.remove(0);
+            this.path.add(this.target);
+            this.next = this.path.remove(0);
         } else {
             if (this.next.epsilonEquals(this.infiltrator.position)) {
                 this.next = path.remove(0);
@@ -43,6 +47,17 @@ public class InfiltratorAIController implements Controller {
             this.delta.sub(this.infiltrator.position);
             this.delta.clamp(0, this.infiltrator.movementSpeed * Gdx.graphics.getDeltaTime());
             this.infiltrator.position.add(this.delta);
+        }
+    }
+
+    @Override
+    public void renderDebug(ShapeRenderer shapeRenderer) {
+        if (this.target != null && !this.target.equals(Vector2.Zero)) {
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.line(
+                    this.infiltrator.position,
+                    this.target
+            );
         }
     }
 }
