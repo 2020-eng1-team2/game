@@ -72,15 +72,32 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                  * The map should be as close to 90% of width and height as possible
                  * but still maintain its aspect ratio
                  */
-                float mapLeft = (screenWidth / 2) - (mapTexWidth / 2);
-                float mapBot = (screenWidth / 2) - (mapTexHeight / 2);
-//                float mapRight = (screenWidth / 2) + (mapTexWidth / 2);
-//                float mapTop = (screenHeight / 2) + (mapTexHeight / 2);
+                float mapLeft;
+                float mapBot;
+                float mapRight;
+                float mapTop;
+
+                float screenCentreX = (screenWidth / 2f);
+                float screenCentreY = (screenHeight / 2f);
+
+//                if (screenWidth > screenHeight) {
+                    // screen is wider than it's tall, so base our calculations
+                    // off of the map's height
+                    float scaledMapHeight = (mapTexHeight / (screenHeight * 0.9f)) * mapTexHeight;
+                    float scaledMapWidth = (mapTexWidth / (screenHeight * 0.9f)) * mapTexWidth;
+
+                    mapLeft = screenCentreX - (scaledMapWidth / 2);
+                    mapRight = screenCentreX + (scaledMapWidth / 2);
+                    mapBot = screenCentreY - (scaledMapHeight / 2);
+                    mapTop = screenCentreY + (scaledMapHeight / 2);
+//                }
 
                 batch.draw(
                     auber.world.map.mapTexture,
                         mapLeft,
-                        mapBot
+                        mapBot,
+                        mapRight - mapLeft,
+                        mapTop - mapBot
                 );
                 Assets.fonts.fixedsys18.draw(
                         batch,
