@@ -93,13 +93,14 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
 //                }
 
                 // JJs Code VVV
-                float drawHeight = screenHeight * 0.8f;
+                float drawHeight = screenHeight * 0.9f;
                 float drawWidth = drawHeight * (mapTexWidth / mapTexHeight);
                 Gdx.app.log("draw dimensions", "drawHeight = " + Float.toString(drawHeight) + ", drawWidth = " + Float.toString(drawWidth));
+                Gdx.app.log("screen dimensions", "X = " + Float.toString(screenWidth) + ", Y: " + Float.toString(screenHeight));
                 batch.draw(
                         auber.world.map.mapTexture,
-                        (screenWidth/2f) - (drawWidth/2f),
-                        screenHeight * 0.1f,
+                        ((screenWidth) * 0.5f - (drawWidth * 0.5f)),
+                        (screenHeight * 0.05f),
                         drawWidth,
                         drawHeight
                 );
