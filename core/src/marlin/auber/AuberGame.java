@@ -44,7 +44,8 @@ public class AuberGame extends ApplicationAdapter {
 		);
 		this.auber = new Auber(this.world);
 
-		activeControllers.add(new AuberKeyboardController(this.auber));
+		AuberKeyboardController auberKeyboardController = new AuberKeyboardController(this.auber);
+		activeControllers.add(auberKeyboardController);
 
 		AuberRenderer auberRenderer = new AuberRenderer(this.auber);
 
@@ -62,6 +63,7 @@ public class AuberGame extends ApplicationAdapter {
 		activeRenderers.add(new MapTopRenderer(this.world));
 
 		activeGuiRenderers.add(auberRenderer);
+		activeGuiRenderers.add(auberKeyboardController);
 
 		activeDebugRenderers.add(this.world.map);
 

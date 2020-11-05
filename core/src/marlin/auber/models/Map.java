@@ -27,6 +27,9 @@ public class Map implements Json.Serializable, DebugRenderer {
 
     public Vector2 auberSpawn;
 
+    public List<Vector2> teleportPads = new ArrayList<>();
+    public static final float TELEPORT_PAD_USE_RANGE = 2f;
+
     private static class NavNode {
         String name;
         Vector2 position;
@@ -281,6 +284,17 @@ public class Map implements Json.Serializable, DebugRenderer {
             }
         }
 
+        JsonValue teleportPads = val.get("teleportPads");
+        for (JsonValue child = teleportPads.child; child != null; child = child.next) {
+            float[] pos = child.asFloatArray();
+            this.teleportPads.add(
+                    this.pixelSpaceToGameSpace(
+                            pos[0],
+                            pos[1]
+                    )
+            );
+        }
+
     }
 
     @Override
@@ -293,6 +307,14 @@ public class Map implements Json.Serializable, DebugRenderer {
                         link.position
                 );
             }
+        }
+
+        shapeRenderer.setColor(Color.ORANGE);
+        for (Vector2 pad : this.teleportPads) {
+            shapeRenderer.x(
+                    pad,
+                    TELEPORT_PAD_USE_RANGE
+            );
         }
     }
 }
