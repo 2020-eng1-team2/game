@@ -1,0 +1,7 @@
+{
+  "spritesheet": "graphics/sptest_large.png",
+  "rows": 2,
+  "cols": 2,
+  "frames": 4,
+  "totalTime": 1.0
+}
