@@ -15,7 +15,7 @@ import marlin.auber.models.Auber;
 public class AuberRenderer implements Renderer, GuiRenderer {
     private final Auber auber;
     //private final Texture auberTexture;
-    private static final int FRAME_COLS = 6, FRAME_ROWS = 5;
+    private static final int FRAME_COLS = 2, FRAME_ROWS = 2;
     Texture walkSheet;
     private Animation<TextureRegion> auberAnimation;
     float stateTime;
@@ -24,7 +24,7 @@ public class AuberRenderer implements Renderer, GuiRenderer {
 //        this.auber = auber;
 //        this.auberTexture = new Texture(Gdx.files.internal("char.png"));
           this.auber = auber;
-          this.walkSheet = new Texture(Gdx.files.internal("spritesheettest.png"));
+          this.walkSheet = new Texture(Gdx.files.internal("sptest.png"));
           TextureRegion[][] tmp = TextureRegion.split(walkSheet,
                 walkSheet.getWidth() / FRAME_COLS,
                 walkSheet.getHeight() / FRAME_ROWS);
@@ -41,7 +41,7 @@ public class AuberRenderer implements Renderer, GuiRenderer {
 
     @Override
     public void render(SpriteBatch batch) {
-        stateTime += Gdx.graphics.getDeltaTime();
+        stateTime += Gdx.graphics.getDeltaTime() / 7; // How often to update animation frame (larger number, slower time)
         TextureRegion currentFrame = auberAnimation.getKeyFrame(stateTime, true);
         batch.draw(
                 currentFrame,
