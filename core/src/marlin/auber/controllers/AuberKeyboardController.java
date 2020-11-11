@@ -52,16 +52,20 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             // And move Auber
             auber.position = auber.position.add(delta);
         }
+        // DEBUG DAMAGE DEALER
+        if(Gdx.input.isKeyJustPressed(Input.Keys.L)){
+            auber.decrementHealth(5f);
+        }
     }
 
     private boolean isTeleportGuiOpen;
 
     @Override
     public void renderGui(SpriteBatch batch) {
+        float screenWidth = Gdx.graphics.getWidth() * 1f;
+        float screenHeight = Gdx.graphics.getHeight() * 1f;
         if (isAtPad()) {
             if (isTeleportGuiOpen) {
-                float screenWidth = Gdx.graphics.getWidth() * 1f;
-                float screenHeight = Gdx.graphics.getHeight() * 1f;
 
                 float mapTexWidth = auber.world.map.mapTexture.getWidth() * 1f;
                 float mapTexHeight = auber.world.map.mapTexture.getHeight() * 1f;
@@ -129,6 +133,13 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 this.isTeleportGuiOpen = false;
             }
         }
+        //Gdx.app.log("Remaining Health", Float.toString(auber.getHealth()));
+        Assets.fonts.fixedsys18.draw(
+                batch,
+                "Health: " + Float.toString(auber.getHealth()),
+                10, screenHeight - 50
+        );
+
     }
 
     private boolean isAtPad() {

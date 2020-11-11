@@ -11,8 +11,6 @@ import marlin.auber.common.GuiRenderer;
 import marlin.auber.common.Renderer;
 import marlin.auber.models.Auber;
 
-// Commented code is legacy code pre-animations
-
 public class AuberRenderer implements Renderer, GuiRenderer {
     private final Auber auber;
     private final AnimSheet walkLeft;
