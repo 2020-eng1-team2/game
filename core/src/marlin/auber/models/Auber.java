@@ -42,6 +42,6 @@ public class Auber {
             return;
         }
         this.position.set(to);
-        this.teleportCooldown = Timer.createTimer(TELEPORT_COOLDOWN);
+        this.teleportCooldown.reset(TELEPORT_COOLDOWN);
     }
 }
