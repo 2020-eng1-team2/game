@@ -2,6 +2,7 @@ package marlin.auber.controllers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import marlin.auber.common.Assets;
@@ -16,6 +17,9 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
     private final Auber auber;
     private final Vector2 delta = new Vector2(0, 0);
     private final Vector2 futurePositionTest = new Vector2(0, 0);
+
+    private final Texture padHighlight = new Texture(Gdx.files.internal("graphics/teleportHighlight.png"));
+    private final Texture padHighlightActive = new Texture(Gdx.files.internal("graphics/teleportHighlightActive.png"));
 
     public AuberKeyboardController(Auber auber) {
         this.auber = auber;
@@ -46,14 +50,14 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         delta.scl(auber.movementSpeed * Gdx.graphics.getDeltaTime());
         // Check collision
         // Note that we check collision with the *middle* of the character
-        futurePositionTest.add(Auber.WIDTH / 2, Auber.HEIGHT/3);
+        futurePositionTest.add(Auber.WIDTH / 2, Auber.HEIGHT / 3);
         futurePositionTest.add(delta);
         if (auber.world.map.inBounds(futurePositionTest)) {
             // And move Auber
             auber.position = auber.position.add(delta);
         }
         // DEBUG DAMAGE DEALER
-        if(Gdx.input.isKeyJustPressed(Input.Keys.L)){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             auber.decrementHealth(5f);
         }
     }
@@ -62,52 +66,74 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
 
     @Override
     public void renderGui(SpriteBatch batch) {
-        float screenWidth = Gdx.graphics.getWidth() * 1f;
-        float screenHeight = Gdx.graphics.getHeight() * 1f;
+        /* Abbreviations:
+         * SS - screen space - origin top-left
+         * GMS - GUI-Map-Space - origin bottom-left
+         * GS - GUI-Space - origin BL
+         * WS - World-Space - origin BL
+         * PWS - Pseudo-World-Space - origin BL
+         * UVS - UV-space - origin idk lmao
+         */
+        float ssScreenW = Gdx.graphics.getWidth() * 1f;
+        float ssScreenH = Gdx.graphics.getHeight() * 1f;
+        // GS and SS are equivalent except for the origin
+        float gsScreenW = ssScreenW;
+        float gsScreenH = ssScreenH;
         if (isAtPad()) {
             if (isTeleportGuiOpen) {
-
-                float mapTexWidth = auber.world.map.mapTexture.getWidth() * 1f;
-                float mapTexHeight = auber.world.map.mapTexture.getHeight() * 1f;
-
-                // TODO: calculate coordinates better
-                /*
-                 * What would be ideal:
-                 * The map should be as close to 90% of width and height as possible
-                 * but still maintain its aspect ratio
-                 */
-                float mapLeft;
-                float mapBot;
-                float mapRight;
-                float mapTop;
-
-                float screenCentreX = (screenWidth / 2f);
-                float screenCentreY = (screenHeight / 2f);
-
-//                if (screenWidth > screenHeight) {
-                    // screen is wider than it's tall, so base our calculations
-                    // off of the map's height
-                    float scaledMapHeight = (mapTexHeight / (screenHeight * 0.9f)) * mapTexHeight;
-                    float scaledMapWidth = (mapTexWidth / (screenHeight * 0.9f)) * mapTexWidth;
-
-                    mapLeft = screenCentreX - (scaledMapWidth / 2);
-                    mapRight = screenCentreX + (scaledMapWidth / 2);
-                    mapBot = screenCentreY - (scaledMapHeight / 2);
-                    mapTop = screenCentreY + (scaledMapHeight / 2);
-//                }
+                float uvMapTexW = auber.world.map.mapTexture.getWidth() * 1f;
+                float uvMapTexH = auber.world.map.mapTexture.getHeight() * 1f;
 
                 // JJs Code VVV
-                float drawHeight = screenHeight * 0.9f;
-                float drawWidth = drawHeight * (mapTexWidth / mapTexHeight);
-                Gdx.app.log("draw dimensions", "drawHeight = " + Float.toString(drawHeight) + ", drawWidth = " + Float.toString(drawWidth));
-                Gdx.app.log("screen dimensions", "X = " + Float.toString(screenWidth) + ", Y: " + Float.toString(screenHeight));
+                // TODO: doesn't work in all cases
+                float gsDrawH = gsScreenH * 0.9f;
+                float gsDrawW = gsDrawH * (uvMapTexW / uvMapTexH);
+                float gsDrawX = (gsScreenW) * 0.5f - (gsDrawH * 0.5f);
+                float gsDrawY = gsScreenH * 0.05f;
+//                Gdx.app.log("screen dimensions", "X = " + screenWidth + ", Y: " + screenHeight);
+//                Gdx.app.log("draw", String.format("x=%f y=%f w=%f h=%f", drawX, drawY, drawWidth, drawHeight));
                 batch.draw(
                         auber.world.map.mapTexture,
-                        ((screenWidth) * 0.5f - (drawWidth * 0.5f)),
-                        (screenHeight * 0.05f),
-                        drawWidth,
-                        drawHeight
+                        gsDrawX,
+                        gsDrawY,
+                        gsDrawW,
+                        gsDrawH
                 );
+
+                // Draw the pads
+                for (Vector2 wsPad : auber.world.map.teleportPads) {
+                    float gsPadX = (wsPad.x / auber.world.map.width) * gsDrawW + gsDrawX;
+                    float gsPadY = (wsPad.y / auber.world.map.height) * gsDrawH + gsDrawY;
+
+                    float ssMouseX = Gdx.input.getX();
+                    float ssMouseY = Gdx.input.getY();
+
+                    float gsMouseX = ssMouseX;
+                    float gsMouseY = ssScreenH - ssMouseY;
+
+                    if (Vector2.dst2(gsPadX, gsPadY, gsMouseX, gsMouseY) < Math.pow(64, 2)) {
+                        batch.draw(
+                                padHighlightActive,
+                                gsPadX - 32,
+                                gsPadY - 32,
+                                64,
+                                64
+                        );
+                        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                            // Teleport!
+                            auber.position.set(wsPad);
+                            isTeleportGuiOpen = false;
+                        }
+                    } else {
+                        batch.draw(
+                                padHighlight,
+                                gsPadX - 32,
+                                gsPadY - 32,
+                                64,
+                                64
+                        );
+                    }
+                }
 
                 Assets.fonts.fixedsys18.draw(
                         batch,
@@ -115,6 +141,8 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                         hptw(0.2f),
                         vpth(0.2f)
                 );
+
+
                 if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                     this.isTeleportGuiOpen = false;
                 }
@@ -136,8 +164,8 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         //Gdx.app.log("Remaining Health", Float.toString(auber.getHealth()));
         Assets.fonts.fixedsys18.draw(
                 batch,
-                "Health: " + Float.toString(auber.getHealth()),
-                10, screenHeight - 50
+                "Health: " + auber.getHealth(),
+                10, ssScreenH - 50
         );
 
     }

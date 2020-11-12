@@ -4,13 +4,13 @@
   "collisionTexture": "maps/map1/map1-collision.png",
   "width": 57,
   "height": 71,
-  "auberSpawn": [1674, 798],
+  "auberSpawn": [1052, 1062],
   "teleportPads": [
     [146, 432],
     [1552, 240],
     [618, 692],
     [1060, 1174],
-    [666, 588]
+    [657, 1574]
   ],
   "navNodes": {
     "brig1": [619, 307],
