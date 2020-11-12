@@ -68,11 +68,9 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
     public void renderGui(SpriteBatch batch) {
         /* Abbreviations:
          * SS - screen space - origin top-left
-         * GMS - GUI-Map-Space - origin bottom-left
          * GS - GUI-Space - origin BL
          * WS - World-Space - origin BL
-         * PWS - Pseudo-World-Space - origin BL
-         * UVS - UV-space - origin idk lmao
+         * UV - UV-space - origin idk lmao
          */
         float ssScreenW = Gdx.graphics.getWidth() * 1f;
         float ssScreenH = Gdx.graphics.getHeight() * 1f;
@@ -121,7 +119,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                         );
                         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                             // Teleport!
-                            auber.position.set(wsPad);
+                            auber.teleport(wsPad);
                             isTeleportGuiOpen = false;
                         }
                     } else {
@@ -147,13 +145,21 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                     this.isTeleportGuiOpen = false;
                 }
             } else {
-                Assets.fonts.fixedsys18.draw(
-                        batch,
-                        "Press F to teleport",
-                        50, 50
-                );
-                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                    this.isTeleportGuiOpen = true;
+                if (auber.canTeleport()) {
+                    Assets.fonts.fixedsys18.draw(
+                            batch,
+                            "Press F to teleport",
+                            50, 50
+                    );
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                        this.isTeleportGuiOpen = true;
+                    }
+                } else {
+                    Assets.fonts.fixedsys18.draw(
+                            batch,
+                            "Can't teleport!",
+                            50, 50
+                    );
                 }
             }
         } else {

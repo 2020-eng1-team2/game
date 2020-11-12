@@ -1,6 +1,7 @@
 package marlin.auber.models;
 
 import com.badlogic.gdx.math.Vector2;
+import marlin.auber.common.Timer;
 
 public class Auber {
     public World world;
@@ -16,6 +17,9 @@ public class Auber {
 
     private float health = 100f;
 
+    public static final float TELEPORT_COOLDOWN = 5f;
+    public Timer teleportCooldown = Timer.createTimer(0f);
+
     public Auber(World world) {
         this.world = world;
         this.position = new Vector2(world.map.auberSpawn);
@@ -27,5 +31,17 @@ public class Auber {
 
     public void decrementHealth(float damage){
         this.health -= damage;
+    }
+
+    public boolean canTeleport() {
+        return this.teleportCooldown.getRemaining() == 0f;
+    }
+
+    public void teleport(Vector2 to) {
+        if (!this.canTeleport()) {
+            return;
+        }
+        this.position.set(to);
+        this.teleportCooldown = Timer.createTimer(TELEPORT_COOLDOWN);
     }
 }

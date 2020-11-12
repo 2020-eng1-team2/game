@@ -5,10 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import marlin.auber.common.Controller;
-import marlin.auber.common.DebugRenderer;
-import marlin.auber.common.GuiRenderer;
-import marlin.auber.common.Renderer;
+import marlin.auber.common.*;
 import marlin.auber.controllers.AuberKeyboardController;
 import marlin.auber.controllers.InfiltratorAIController;
 import marlin.auber.models.Auber;
@@ -75,6 +72,8 @@ public class AuberGame extends ApplicationAdapter {
 
 	@Override
 	public void render () {
+		// Tick timers
+		Timer.tickAll();
 		// Tick the controllers
 		for (Controller controller : this.activeControllers) {
 			controller.tick();
