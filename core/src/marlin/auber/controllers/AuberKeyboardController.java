@@ -2,14 +2,17 @@ package marlin.auber.controllers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import marlin.auber.common.Assets;
 import marlin.auber.common.Controller;
+import marlin.auber.common.DebugRenderer;
 import marlin.auber.common.GuiRenderer;
 import marlin.auber.models.Auber;
 import marlin.auber.models.Map;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import static marlin.auber.common.Helpers.*;
 
@@ -20,6 +23,8 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
 
     private final Texture padHighlight = new Texture(Gdx.files.internal("graphics/teleportHighlight.png"));
     private final Texture padHighlightActive = new Texture(Gdx.files.internal("graphics/teleportHighlightActive.png"));
+
+    ShapeRenderer healthShapeRenderer;
 
     public AuberKeyboardController(Auber auber) {
         this.auber = auber;
@@ -167,13 +172,32 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 this.isTeleportGuiOpen = false;
             }
         }
+        // HEALTH BAR CODE HERE
+        healthShapeRenderer = new ShapeRenderer();
+        healthShapeRenderer.setAutoShapeType(true);
+        this.healthShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        healthShapeRenderer.setColor(Color.GRAY);
+        healthShapeRenderer.rect(
+                15f,
+                ssScreenH - 60f,
+                210f,
+                50f
+        );
+        healthShapeRenderer.setColor(Color.GREEN);
+        healthShapeRenderer.rect(
+               20f,
+               ssScreenH - 55,
+               auber.getHealth() * 2f,
+               40f
+        );
+        this.healthShapeRenderer.end();
         //Gdx.app.log("Remaining Health", Float.toString(auber.getHealth()));
         Assets.fonts.fixedsys18.draw(
                 batch,
                 "Health: " + auber.getHealth(),
                 10, ssScreenH - 50
         );
-
+        // END HEALTH BAR CODE
     }
 
     private boolean isAtPad() {
