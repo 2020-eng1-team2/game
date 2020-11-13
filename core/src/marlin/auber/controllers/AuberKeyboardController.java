@@ -30,6 +30,8 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         this.auber = auber;
     }
 
+    // TODO: Bounding Box Collision (For side walls)
+
     @Override
     public void tick() {
         // Debug
@@ -60,6 +62,14 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         if (auber.world.map.inBounds(futurePositionTest)) {
             // And move Auber
             auber.position = auber.position.add(delta);
+        }
+        else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x, futurePositionTest.y - delta.y))){
+            // Y is Out of bounds
+            auber.position = auber.position.add(new Vector2(delta.x, 0f));
+        }
+        else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x - delta.x, futurePositionTest.y))){
+            // X is Out of bounds
+            auber.position = auber.position.add(new Vector2(0f, delta.y));
         }
         // DEBUG DAMAGE DEALER
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
@@ -185,6 +195,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         healthShapeRenderer = new ShapeRenderer();
         healthShapeRenderer.setAutoShapeType(true);
         this.healthShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        // Draw bar background
         healthShapeRenderer.setColor(Color.GRAY);
         healthShapeRenderer.rect(
                 15f,
@@ -192,6 +203,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 210f,
                 50f
         );
+        // Draw the health bar
         healthShapeRenderer.setColor(Color.GREEN);
         healthShapeRenderer.rect(
                20f,
@@ -200,6 +212,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                40f
         );
         this.healthShapeRenderer.end();
+        // Display health value inside the bar
         //Gdx.app.log("Remaining Health", Float.toString(auber.getHealth()));
         Assets.fonts.fixedsys18.draw(
                 batch,
