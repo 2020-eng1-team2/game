@@ -103,14 +103,28 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 float gsDrawX = (gsScreenW) * 0.5f - (gsDrawH * 0.5f);
                 float gsDrawY = gsScreenH * 0.05f;
 //                Gdx.app.log("screen dimensions", "X = " + screenWidth + ", Y: " + screenHeight);
-//                Gdx.app.log("draw", String.format("x=%f y=%f w=%f h=%f", drawX, drawY, drawWidth, drawHeight));
-                batch.draw(
-                        auber.world.map.mapTexture,
-                        gsDrawX,
-                        gsDrawY,
-                        gsDrawW,
-                        gsDrawH
-                );
+//                Gdx.app.log("draw", String.format("x=%f y=%f w=%f h=%f", gsDrawX, gsDrawY, gsDrawW, gsDrawH));
+                if (ssScreenH < ssScreenW) {
+                    float w = (518f)/((ssScreenW/ssScreenH)/(16f/9f));
+                    //Gdx.app.log("draw", Float.toString(w));
+                    batch.draw(
+                            auber.world.map.mapTexture,
+                            (1280f / 2f) - (0.5f * w),
+                            720f * 0.05f,
+                            w,
+                            720f * 0.9f
+                    );
+                }
+                else{
+                    float w = (1280f * 0.9f)*((ssScreenW/ssScreenH)/(16f/9f));
+                    batch.draw(
+                            auber.world.map.mapTexture,
+                            1280f * 0.05f,
+                            (720f / 2f) - (0.5f * w),
+                            1280f * 0.9f,
+                            w
+                    );
+                }
 
                 // Draw the pads
                 for (Vector2 wsPad : auber.world.map.teleportPads) {
