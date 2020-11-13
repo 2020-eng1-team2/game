@@ -33,6 +33,10 @@ public class Auber {
         this.health -= damage;
     }
 
+    public void resetHealth(){
+        this.health = 100f;
+    }
+
     public boolean canTeleport() {
         return this.teleportCooldown.getRemaining() == 0f;
     }

@@ -5,6 +5,7 @@
   "width": 57,
   "height": 71,
   "auberSpawn": [1052, 1062],
+  "healPoint": [1540, 200],
   "teleportPads": [
     [146, 432],
     [1552, 240],

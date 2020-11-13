@@ -26,6 +26,7 @@ public class Map implements Json.Serializable, DebugRenderer {
     public float height;
 
     public Vector2 auberSpawn;
+    public Vector2 healPoint;
 
     public List<Vector2> teleportPads = new ArrayList<>();
     public static final float TELEPORT_PAD_USE_RANGE = 2f;
@@ -250,6 +251,12 @@ public class Map implements Json.Serializable, DebugRenderer {
         auberSpawn = pixelSpaceToGameSpace(
             auberSpawnLoc.getFloat(0),
             auberSpawnLoc.getFloat(1)
+        );
+
+        JsonValue healPointLoc = val.get("healPoint");
+        healPoint = pixelSpaceToGameSpace(
+                healPointLoc.getFloat(0),
+                healPointLoc.getFloat(1)
         );
 
         JsonValue navNodes = val.get("navNodes");

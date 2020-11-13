@@ -87,7 +87,6 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 float uvMapTexW = auber.world.map.mapTexture.getWidth() * 1f;
                 float uvMapTexH = auber.world.map.mapTexture.getHeight() * 1f;
 
-                // JJs Code VVV
                 // TODO: doesn't work in all cases
                 float gsDrawH = gsScreenH * 0.9f;
                 float gsDrawW = gsDrawH * (uvMapTexW / uvMapTexH);
@@ -172,7 +171,17 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 this.isTeleportGuiOpen = false;
             }
         }
-        // HEALTH BAR CODE HERE
+        if (isAtHealPoint()) {
+            Assets.fonts.fixedsys18.draw(
+                    batch,
+                    "Press F to heal",
+                    50, 50
+            );
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                this.auber.resetHealth();
+            }
+        }
+        // HEALTH BAR CODE START
         healthShapeRenderer = new ShapeRenderer();
         healthShapeRenderer.setAutoShapeType(true);
         this.healthShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -197,7 +206,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 "Health: " + auber.getHealth(),
                 10, ssScreenH - 50
         );
-        // END HEALTH BAR CODE
+        // HEALTH BAR CODE END
     }
 
     private boolean isAtPad() {
@@ -205,6 +214,13 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             if (pad.dst2(this.auber.position) <= Math.pow(Map.TELEPORT_PAD_USE_RANGE, 2)) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private boolean isAtHealPoint() {
+        if (this.auber.world.map.healPoint.dst2(this.auber.position) <= Math.pow(Map.TELEPORT_PAD_USE_RANGE, 2)) {
+            return true;
         }
         return false;
     }
