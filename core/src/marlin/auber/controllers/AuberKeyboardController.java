@@ -78,6 +78,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
     }
 
     private boolean isTeleportGuiOpen;
+    private boolean isKeypadGuiOpen;
 
     @Override
     public void renderGui(SpriteBatch batch) {
@@ -97,14 +98,11 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 float uvMapTexW = auber.world.map.mapTexture.getWidth() * 1f;
                 float uvMapTexH = auber.world.map.mapTexture.getHeight() * 1f;
 
-                // TODO: doesn't work in all cases
                 float gsDrawH = gsScreenH * 0.9f;
                 float gsDrawW = gsDrawH * (uvMapTexW / uvMapTexH);
                 float gsDrawX = (gsScreenW) * 0.5f - (gsDrawH * 0.5f);
                 float gsDrawY = gsScreenH * 0.05f;
-//                Gdx.app.log("screen dimensions", "X = " + screenWidth + ", Y: " + screenHeight);
-//                Gdx.app.log("draw", String.format("x=%f y=%f w=%f h=%f", gsDrawX, gsDrawY, gsDrawW, gsDrawH));
-                float mapAspectRatio = 0.8f;
+                float mapAspectRatio = 0.8f; // texture width / texture height
                 float currentAspectRatio = ssScreenW/ssScreenH;
                 float defaultAspectRatio = 16f/9f;
                 // If aspect ratio of screen is less than the aspect ratio of map texture, then the width of the texture
@@ -133,6 +131,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                     );
                 }
 
+                // TODO: Fix the draw locations of the pads
                 // Draw the pads
                 for (Vector2 wsPad : auber.world.map.teleportPads) {
                     float gsPadX = (wsPad.x / auber.world.map.width) * gsDrawW + gsDrawX;
@@ -212,7 +211,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 this.auber.resetHealth();
             }
         }
-        // HEALTH BAR CODE START
+        // HEALTH BAR START
         healthShapeRenderer = new ShapeRenderer();
         healthShapeRenderer.setAutoShapeType(true);
         this.healthShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -240,7 +239,27 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 "Health: " + auber.getHealth(),
                 10, ssScreenH - 50
         );
-        // HEALTH BAR CODE END
+        // HEALTH BAR END
+        // KEYPAD UI START
+        if (isAtKeypad()) {
+            if (this.isKeypadGuiOpen) {
+                // draw keypad like we did with the teleport gui
+            }
+            else {
+                Assets.fonts.fixedsys18.draw(
+                        batch,
+                        "Press F to use keypad",
+                        50, 50
+                );
+                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                    this.isKeypadGuiOpen = true;
+                }
+            }
+        }
+        else {
+            this.isKeypadGuiOpen = false;
+        }
+        // KEYPAD UI END
     }
 
     private boolean isAtPad() {
@@ -255,6 +274,15 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
     private boolean isAtHealPoint() {
         if (this.auber.world.map.healPoint.dst2(this.auber.position) <= Math.pow(Map.TELEPORT_PAD_USE_RANGE, 2)) {
             return true;
+        }
+        return false;
+    }
+
+    private boolean isAtKeypad() {
+        for (Vector2 pad : this.auber.world.map.keypads) {
+            if (pad.dst2(this.auber.position) <= Math.pow(Map.TELEPORT_PAD_USE_RANGE, 2)) {
+                return true;
+            }
         }
         return false;
     }

@@ -28,6 +28,7 @@ public class Map implements Json.Serializable, DebugRenderer {
     public Vector2 auberSpawn;
     public Vector2 healPoint;
 
+    public List<Vector2> keypads = new ArrayList<>();
     public List<Vector2> teleportPads = new ArrayList<>();
     public static final float TELEPORT_PAD_USE_RANGE = 2f;
 
@@ -302,6 +303,16 @@ public class Map implements Json.Serializable, DebugRenderer {
             );
         }
 
+        JsonValue keypads = val.get("keypads");
+        for (JsonValue child = keypads.child; child != null; child = child.next) {
+            float[] pos = child.asFloatArray();
+            this.keypads.add(
+                    this.pixelSpaceToGameSpace(
+                            pos[0],
+                            pos[1]
+                    )
+            );
+        }
     }
 
     @Override
