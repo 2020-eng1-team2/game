@@ -13,22 +13,32 @@ import marlin.auber.models.Auber;
 
 public class AuberRenderer implements Renderer, GuiRenderer {
     private final Auber auber;
-    private final AnimSheet walkLeft;
+    private final Texture idle = new Texture(Gdx.files.internal("graphics/auberStatic.png"));
+    private final AnimSheet walkLeft = AnimSheet.create(Gdx.files.internal("graphics/auberWalkLeft.json"));
 
     public AuberRenderer(Auber auber) {
         this.auber = auber;
-        this.walkLeft = AnimSheet.create(Gdx.files.internal("graphics/auberWalkLeft.json"));
     }
 
     @Override
     public void render(SpriteBatch batch) {
-        batch.draw(
-                this.walkLeft.tickAndGet(true),
-                this.auber.position.x,
-                this.auber.position.y,
-                Auber.WIDTH,
-                Auber.HEIGHT
-        );
+        if (this.auber.isWalking) {
+            batch.draw(
+                    this.walkLeft.tickAndGet(true),
+                    this.auber.position.x,
+                    this.auber.position.y,
+                    Auber.WIDTH,
+                    Auber.HEIGHT
+            );
+        } else {
+            batch.draw(
+                    this.idle,
+                    this.auber.position.x,
+                    this.auber.position.y,
+                    Auber.WIDTH,
+                    Auber.HEIGHT
+            );
+        }
     }
 
     @Override

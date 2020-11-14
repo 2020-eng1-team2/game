@@ -7,6 +7,8 @@ public class Auber {
     public World world;
     public Vector2 position;
 
+    public boolean isWalking = false;
+
     /**
      * Auber's movement speed, in metres (in-game units) *per second* (not per frame!)
      */

@@ -59,17 +59,20 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         // Note that we check collision with the *middle* of the character
         futurePositionTest.add(Auber.WIDTH / 2, Auber.HEIGHT / 2);
         futurePositionTest.add(delta);
-        if (auber.world.map.inBounds(futurePositionTest)) {
+        if (delta.epsilonEquals(0, 0)) {
+            auber.isWalking = false;
+        } else if (auber.world.map.inBounds(futurePositionTest)) {
             // And move Auber
             auber.position = auber.position.add(delta);
-        }
-        else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x, futurePositionTest.y - delta.y))){
+            auber.isWalking = true;
+        } else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x, futurePositionTest.y - delta.y))){
             // Y is Out of bounds
             auber.position = auber.position.add(new Vector2(delta.x, 0f));
-        }
-        else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x - delta.x, futurePositionTest.y))){
+            auber.isWalking = true;
+        } else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x - delta.x, futurePositionTest.y))){
             // X is Out of bounds
             auber.position = auber.position.add(new Vector2(0f, delta.y));
+            auber.isWalking = true;
         }
         // DEBUG DAMAGE DEALER
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
