@@ -104,9 +104,15 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 float gsDrawY = gsScreenH * 0.05f;
 //                Gdx.app.log("screen dimensions", "X = " + screenWidth + ", Y: " + screenHeight);
 //                Gdx.app.log("draw", String.format("x=%f y=%f w=%f h=%f", gsDrawX, gsDrawY, gsDrawW, gsDrawH));
-                if (ssScreenH < ssScreenW) {
-                    float w = (518f)/((ssScreenW/ssScreenH)/(16f/9f));
-                    //Gdx.app.log("draw", Float.toString(w));
+                float mapAspectRatio = 0.8f;
+                float currentAspectRatio = ssScreenW/ssScreenH;
+                float defaultAspectRatio = 16f/9f;
+                // If aspect ratio of screen is less than the aspect ratio of map texture, then the width of the texture
+                // needs to be 90% the width of the screen and vice versa
+                if (currentAspectRatio > mapAspectRatio) {
+                    // float w is used to store the draw width of the texture. This is calculated using the draw height, this is then divided
+                    // by the ratios of the current and default aspect ratios before being converted into the draw width
+                    float w = ((720f * 0.9f)/(currentAspectRatio/defaultAspectRatio)) * mapAspectRatio;
                     batch.draw(
                             auber.world.map.mapTexture,
                             (1280f / 2f) - (0.5f * w),
@@ -116,13 +122,14 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                     );
                 }
                 else{
-                    float w = (1280f * 0.9f)*((ssScreenW/ssScreenH)/(16f/9f));
+                    // same as the process to calculate float w, except we know the draw width this time, and so are calculating the draw height
+                    float h = ((1280f * 0.9f)*(currentAspectRatio/defaultAspectRatio)) / mapAspectRatio;
                     batch.draw(
                             auber.world.map.mapTexture,
                             1280f * 0.05f,
-                            (720f / 2f) - (0.5f * w),
+                            (720f / 2f) - (0.5f * h),
                             1280f * 0.9f,
-                            w
+                            h
                     );
                 }
 
