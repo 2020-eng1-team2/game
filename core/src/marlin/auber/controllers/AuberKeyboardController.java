@@ -57,7 +57,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         delta.scl(auber.movementSpeed * Gdx.graphics.getDeltaTime());
         // Check collision
         // Note that we check collision with the *middle* of the character
-        futurePositionTest.add(Auber.WIDTH / 2, Auber.HEIGHT / 3);
+        futurePositionTest.add(Auber.WIDTH / 2, Auber.HEIGHT / 2);
         futurePositionTest.add(delta);
         if (auber.world.map.inBounds(futurePositionTest)) {
             // And move Auber
@@ -102,34 +102,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 float gsDrawW = gsDrawH * (uvMapTexW / uvMapTexH);
                 float gsDrawX = (gsScreenW) * 0.5f - (gsDrawH * 0.5f);
                 float gsDrawY = gsScreenH * 0.05f;
-                float mapAspectRatio = 0.8f; // texture width / texture height
-                float currentAspectRatio = ssScreenW/ssScreenH;
-                float defaultAspectRatio = 16f/9f;
-                // If aspect ratio of screen is less than the aspect ratio of map texture, then the width of the texture
-                // needs to be 90% the width of the screen and vice versa
-                if (currentAspectRatio > mapAspectRatio) {
-                    // float w is used to store the draw width of the texture. This is calculated using the draw height, this is then divided
-                    // by the ratios of the current and default aspect ratios before being converted into the draw width
-                    float w = ((720f * 0.9f)/(currentAspectRatio/defaultAspectRatio)) * mapAspectRatio;
-                    batch.draw(
-                            auber.world.map.mapTexture,
-                            (1280f / 2f) - (0.5f * w),
-                            720f * 0.05f,
-                            w,
-                            720f * 0.9f
-                    );
-                }
-                else{
-                    // same as the process to calculate float w, except we know the draw width this time, and so are calculating the draw height
-                    float h = ((1280f * 0.9f)*(currentAspectRatio/defaultAspectRatio)) / mapAspectRatio;
-                    batch.draw(
-                            auber.world.map.mapTexture,
-                            1280f * 0.05f,
-                            (720f / 2f) - (0.5f * h),
-                            1280f * 0.9f,
-                            h
-                    );
-                }
+                scaleGui(auber.world.map.mapTexture, 0.9f, batch);
 
                 // TODO: Fix the draw locations of the pads
                 // Draw the pads
@@ -201,6 +174,36 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 this.isTeleportGuiOpen = false;
             }
         }
+        // KEYPAD UI START
+        // TODO: Fix keypad UI not showing
+        if (isAtKeypad()) {
+            if (this.isKeypadGuiOpen) {
+                // draw keypad like we did with the teleport gui
+                //scaleGui(auber.world.map.keypadTexture, 0.9f, batch);
+                batch.draw(
+                        auber.world.map.keypadTexture,
+                        0f,
+                        0f,
+                        50f,
+                        50f
+                );
+                Gdx.app.log("keypad", Integer.toString(auber.world.map.keypadTexture.getHeight()));
+            }
+            else {
+                Assets.fonts.fixedsys18.draw(
+                        batch,
+                        "Press F to use keypad",
+                        50, 50
+                );
+                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                    this.isKeypadGuiOpen = true;
+                }
+            }
+        }
+        else {
+            this.isKeypadGuiOpen = false;
+        }
+        // KEYPAD UI END
         if (isAtHealPoint()) {
             Assets.fonts.fixedsys18.draw(
                     batch,
@@ -240,26 +243,6 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 10, ssScreenH - 50
         );
         // HEALTH BAR END
-        // KEYPAD UI START
-        if (isAtKeypad()) {
-            if (this.isKeypadGuiOpen) {
-                // draw keypad like we did with the teleport gui
-            }
-            else {
-                Assets.fonts.fixedsys18.draw(
-                        batch,
-                        "Press F to use keypad",
-                        50, 50
-                );
-                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                    this.isKeypadGuiOpen = true;
-                }
-            }
-        }
-        else {
-            this.isKeypadGuiOpen = false;
-        }
-        // KEYPAD UI END
     }
 
     private boolean isAtPad() {
@@ -272,7 +255,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
     }
 
     private boolean isAtHealPoint() {
-        if (this.auber.world.map.healPoint.dst2(this.auber.position) <= Math.pow(Map.TELEPORT_PAD_USE_RANGE, 2)) {
+        if (this.auber.world.map.healPoint.dst2(this.auber.position) <= Math.pow(Map.KEYPAD_USE_RANGE, 2)) {
             return true;
         }
         return false;
@@ -280,10 +263,45 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
 
     private boolean isAtKeypad() {
         for (Vector2 pad : this.auber.world.map.keypads) {
-            if (pad.dst2(this.auber.position) <= Math.pow(Map.TELEPORT_PAD_USE_RANGE, 2)) {
+            if (pad.dst2(this.auber.position) <= Math.pow(Map.KEYPAD_USE_RANGE, 2)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private void scaleGui(Texture texture, float cover, SpriteBatch batch) {
+        float mapAspectRatio = (texture.getWidth() * 1f)/(texture.getHeight() * 1f); // texture width / texture height
+        float currentAspectRatio = (Gdx.graphics.getWidth() * 1f)/(Gdx.graphics.getHeight() * 1f);
+        float defaultAspectRatio = 16f/9f;
+        // If aspect ratio of screen is less than the aspect ratio of map texture, then the width of the texture
+        // needs to be 90% the width of the screen and vice versa
+        if (currentAspectRatio > mapAspectRatio) {
+            // float drawMapWidth is used to store the draw width of the texture. This is calculated using the draw height, this is then divided
+            // by the ratios of the current and default aspect ratios before being converted into the draw width
+            float drawMapHeight = 720f * cover;
+            float drawMapWidth = (drawMapHeight/(currentAspectRatio/defaultAspectRatio)) * mapAspectRatio;
+            Vector2 drawMapOrigin = new Vector2((1280f / 2f) - (0.5f * drawMapWidth), 720f * ((1f - cover)/2f));
+            batch.draw(
+                    texture,
+                    drawMapOrigin.x,
+                    drawMapOrigin.y,
+                    drawMapWidth,
+                    drawMapHeight
+            );
+        }
+        else{
+            // same as the process to calculate float drawMapWidth, except we know the draw width this time, and so are calculating the draw height
+            float drawMapWidth = 1280f * cover;
+            float drawMapHeight = (drawMapWidth*(currentAspectRatio/defaultAspectRatio)) / mapAspectRatio;
+            Vector2 drawMapOrigin = new Vector2(1280f * ((1f - cover)/2f), (720f / 2f) - (0.5f * drawMapHeight));
+            batch.draw(
+                    texture,
+                    drawMapOrigin.x,
+                    drawMapOrigin.y,
+                    drawMapWidth,
+                    drawMapHeight
+            );
+        }
     }
 }

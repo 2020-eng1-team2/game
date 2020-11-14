@@ -19,6 +19,7 @@ public class Map implements Json.Serializable, DebugRenderer {
     public Texture mapTexture;
     public Texture topCoatTexture;
     public Texture collisionTexture;
+    public Texture keypadTexture;
 
     private Pixmap collisionPixmap;
 
@@ -31,6 +32,7 @@ public class Map implements Json.Serializable, DebugRenderer {
     public List<Vector2> keypads = new ArrayList<>();
     public List<Vector2> teleportPads = new ArrayList<>();
     public static final float TELEPORT_PAD_USE_RANGE = 2f;
+    public static final float KEYPAD_USE_RANGE = 4f;
 
     private static class NavNode {
         String name;
@@ -240,6 +242,7 @@ public class Map implements Json.Serializable, DebugRenderer {
         mapTexture = new Texture(Gdx.files.internal(val.getString("mapTexture")));
         topCoatTexture = new Texture(Gdx.files.internal(val.getString("topcoatTexture")));
         collisionTexture = new Texture(Gdx.files.internal(val.getString("collisionTexture")));
+        keypadTexture = new Texture(Gdx.files.internal(val.getString("keypadTexture")));
 
         TextureData texData = collisionTexture.getTextureData();
         texData.prepare();
