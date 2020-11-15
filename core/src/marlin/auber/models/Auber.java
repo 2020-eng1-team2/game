@@ -7,7 +7,13 @@ public class Auber {
     public World world;
     public Vector2 position;
 
-    public boolean isWalking = false;
+    public enum WalkDirection {
+        IDLE,
+        LEFT,
+        RIGHT
+    }
+
+    public WalkDirection walkDirection = WalkDirection.IDLE;
 
     /**
      * Auber's movement speed, in metres (in-game units) *per second* (not per frame!)

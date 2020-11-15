@@ -60,19 +60,19 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         futurePositionTest.add(Auber.WIDTH / 2, Auber.HEIGHT / 2);
         futurePositionTest.add(delta);
         if (delta.epsilonEquals(0, 0)) {
-            auber.isWalking = false;
-        } else if (auber.world.map.inBounds(futurePositionTest)) {
-            // And move Auber
-            auber.position = auber.position.add(delta);
-            auber.isWalking = true;
-        } else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x, futurePositionTest.y - delta.y))){
-            // Y is Out of bounds
-            auber.position = auber.position.add(new Vector2(delta.x, 0f));
-            auber.isWalking = true;
-        } else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x - delta.x, futurePositionTest.y))){
-            // X is Out of bounds
-            auber.position = auber.position.add(new Vector2(0f, delta.y));
-            auber.isWalking = true;
+            auber.walkDirection = Auber.WalkDirection.IDLE;
+        } else {
+            auber.walkDirection = delta.x > 0 ? Auber.WalkDirection.RIGHT : Auber.WalkDirection.LEFT;
+            if (auber.world.map.inBounds(futurePositionTest)) {
+                // And move Auber
+                auber.position = auber.position.add(delta);
+            } else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x, futurePositionTest.y - delta.y))) {
+                // Y is Out of bounds
+                auber.position = auber.position.add(new Vector2(delta.x, 0f));
+            } else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x - delta.x, futurePositionTest.y))) {
+                // X is Out of bounds
+                auber.position = auber.position.add(new Vector2(0f, delta.y));
+            }
         }
         // DEBUG DAMAGE DEALER
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
@@ -94,17 +94,15 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         float ssScreenW = Gdx.graphics.getWidth() * 1f;
         float ssScreenH = Gdx.graphics.getHeight() * 1f;
         // GS and SS are equivalent except for the origin
-        float gsScreenW = ssScreenW;
-        float gsScreenH = ssScreenH;
         if (isAtPad()) {
             if (isTeleportGuiOpen) {
                 float uvMapTexW = auber.world.map.mapTexture.getWidth() * 1f;
                 float uvMapTexH = auber.world.map.mapTexture.getHeight() * 1f;
 
-                float gsDrawH = gsScreenH * 0.9f;
+                float gsDrawH = ssScreenH * 0.9f;
                 float gsDrawW = gsDrawH * (uvMapTexW / uvMapTexH);
-                float gsDrawX = (gsScreenW) * 0.5f - (gsDrawH * 0.5f);
-                float gsDrawY = gsScreenH * 0.05f;
+                float gsDrawX = (ssScreenW) * 0.5f - (gsDrawH * 0.5f);
+                float gsDrawY = ssScreenH * 0.05f;
                 scaleGui(auber.world.map.mapTexture, 0.9f, batch);
 
                 // TODO: Fix the draw locations of the pads
@@ -116,10 +114,9 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                     float ssMouseX = Gdx.input.getX();
                     float ssMouseY = Gdx.input.getY();
 
-                    float gsMouseX = ssMouseX;
                     float gsMouseY = ssScreenH - ssMouseY;
 
-                    if (Vector2.dst2(gsPadX, gsPadY, gsMouseX, gsMouseY) < Math.pow(64, 2)) {
+                    if (Vector2.dst2(gsPadX, gsPadY, ssMouseX, gsMouseY) < Math.pow(64, 2)) {
                         batch.draw(
                                 padHighlightActive,
                                 gsPadX - 32,
@@ -258,10 +255,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
     }
 
     private boolean isAtHealPoint() {
-        if (this.auber.world.map.healPoint.dst2(this.auber.position) <= Math.pow(Map.KEYPAD_USE_RANGE, 2)) {
-            return true;
-        }
-        return false;
+        return this.auber.world.map.healPoint.dst2(this.auber.position) <= Math.pow(Map.KEYPAD_USE_RANGE, 2);
     }
 
     private boolean isAtKeypad() {
