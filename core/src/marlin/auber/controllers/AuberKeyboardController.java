@@ -94,6 +94,25 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         float ssScreenW = Gdx.graphics.getWidth() * 1f;
         float ssScreenH = Gdx.graphics.getHeight() * 1f;
         // GS and SS are equivalent except for the origin
+        if (isAtHealPoint()) {
+            Assets.fonts.fixedsys18.draw(
+                    batch,
+                    "Press F to heal",
+                    50, 50
+            );
+            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                this.auber.resetHealth();
+            }
+        }
+        batch.end();
+        // DRAW HEALTH BAR
+        drawHealthBar(healthShapeRenderer);
+        batch.begin();
+        Assets.fonts.fixedsys18.draw(
+                batch,
+                "Health: " + (int) auber.getHealth(),
+                ssScreenW * (25f/1280f), ssScreenH - (ssScreenH * (30f/720f))
+        );
         if (isAtPad()) {
             if (isTeleportGuiOpen) {
                 float uvMapTexW = auber.world.map.mapTexture.getWidth() * 1f;
@@ -195,25 +214,6 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             this.isKeypadGuiOpen = false;
         }
         // KEYPAD UI END
-        if (isAtHealPoint()) {
-            Assets.fonts.fixedsys18.draw(
-                    batch,
-                    "Press F to heal",
-                    50, 50
-            );
-            if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                this.auber.resetHealth();
-            }
-        }
-        batch.end();
-        // DRAW HEALTH BAR
-        drawHealthBar(healthShapeRenderer);
-        batch.begin();
-        Assets.fonts.fixedsys18.draw(
-                batch,
-                "Health: " + auber.getHealth(),
-                10, ssScreenH - 50
-        );
     }
 
     private boolean isAtPad() {
@@ -274,24 +274,28 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
     }
 
     private void drawHealthBar(ShapeRenderer shapeRender){
+        float ssScreenW = Gdx.graphics.getWidth();
+        float ssScreenH = Gdx.graphics.getHeight();
+        float xRatio =  ssScreenW * (200f/1280f);
+        float yRatio = ssScreenH * (40f/720f);
         shapeRender = new ShapeRenderer();
         shapeRender.setAutoShapeType(true);
         shapeRender.begin(ShapeRenderer.ShapeType.Filled);
         // Draw bar background
         shapeRender.setColor(Color.GRAY);
         shapeRender.rect(
-                15f,
-                Gdx.graphics.getHeight() - 60f,
-                210f,
-                50f
+                ssScreenW * (15f/1280f),
+                ssScreenH - (ssScreenH * (60f/720f)),
+                ssScreenW * (210f/1280f),
+                ssScreenH * (50f/720f)
         );
         // Draw the health bar
         shapeRender.setColor(Color.GREEN);
         shapeRender.rect(
-                20f,
-                Gdx.graphics.getHeight() - 55,
-                auber.getHealth() * 2f,
-                40f
+                ssScreenW * (20f/1280f),
+                ssScreenH - (ssScreenH * (55f/720f)),
+                (auber.getHealth()/100f) * ssScreenW * (200f/1280f),
+                ssScreenH * (40f/720f)
         );
         shapeRender.end();
     }
