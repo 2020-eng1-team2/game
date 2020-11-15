@@ -124,7 +124,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 float gsDrawY = ssScreenH * 0.05f;
                 scaleGui(auber.world.map.mapTexture, 0.9f, batch);
 
-                // TODO: Fix the draw locations of the pads
+                // TODO: Add pad highlights with mouse over
                 // Draw the pads
                 for (Vector2 wsPad : auber.world.map.teleportPads) {
                     drawPad(padHighlight, auber.world.map.mapTexture, 0.9f, wsPad, 64f, 64f, batch);
@@ -290,8 +290,11 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         float defaultAspectRatio = 16f/9f;
         float drawMapWidth;
         float drawMapHeight;
+        float padDrawWidth;
+        float padDrawHeight;
         Vector2 drawMapTL;
         Vector2 ssOffset = auber.world.map.gameSpaceToPixelSpace(offset);
+        Vector2 drawPosition;
         // If aspect ratio of screen is less than the aspect ratio of map texture, then the width of the texture
         // needs to be 90% the width of the screen and vice versa
         if (currentAspectRatio > mapAspectRatio) {
@@ -299,21 +302,25 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             drawMapHeight = 720f * cover;
             drawMapWidth = (drawMapHeight/(currentAspectRatio/defaultAspectRatio)) * mapAspectRatio;
             drawMapTL = new Vector2((1280f / 2f) - (0.5f * drawMapWidth), 720f - (720f * ((1f - cover)/2f)));
+            padDrawHeight = 720f / 15f;
+            padDrawWidth = padDrawHeight/(currentAspectRatio/defaultAspectRatio);
         }
         else{
             drawMapWidth = 1280f * cover;
             drawMapHeight = (drawMapWidth*(currentAspectRatio/defaultAspectRatio)) / mapAspectRatio;
             drawMapTL = new Vector2(1280f * ((1f - cover)/2f), (720f / 2f) + (0.5f * drawMapHeight));
+            padDrawWidth = 1280f / 15f;
+            padDrawHeight = padDrawWidth * (currentAspectRatio/defaultAspectRatio);
         }
+        drawPosition = new Vector2(drawMapTL.x + (drawMapWidth * (ssOffset.x/map.getWidth())), drawMapTL.y - (drawMapHeight * (ssOffset.y/map.getHeight())));
         // draw pad
         batch.draw(
                 pad,
-                drawMapTL.x + (drawMapWidth * (ssOffset.x/map.getWidth())),
-                drawMapTL.y - (drawMapHeight * (ssOffset.y/map.getHeight())),
-                x,
-                y
+                drawPosition.x - (padDrawWidth / 2f),
+                drawPosition.y - (padDrawHeight / 2f),
+                padDrawWidth,
+                padDrawHeight
         );
-        // TODO: Ensure pads drawn keep their circular shape when resizing screen
     }
 
     private void drawHealthBar(ShapeRenderer shapeRender){
