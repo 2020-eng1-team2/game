@@ -24,8 +24,6 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
     private final Texture padHighlight = new Texture(Gdx.files.internal("graphics/teleportHighlight.png"));
     private final Texture padHighlightActive = new Texture(Gdx.files.internal("graphics/teleportHighlightActive.png"));
 
-    ShapeRenderer healthShapeRenderer;
-
     public AuberKeyboardController(Auber auber) {
         this.auber = auber;
     }
@@ -175,19 +173,11 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             }
         }
         // KEYPAD UI START
-        // TODO: Fix keypad UI not showing
+        // TODO: Move health bar code out of function
         if (isAtKeypad()) {
             if (this.isKeypadGuiOpen) {
                 // draw keypad like we did with the teleport gui
-                //scaleGui(auber.world.map.keypadTexture, 0.9f, batch);
-                batch.draw(
-                        auber.world.map.keypadTexture,
-                        0f,
-                        0f,
-                        50f,
-                        50f
-                );
-                Gdx.app.log("keypad", Integer.toString(auber.world.map.keypadTexture.getHeight()));
+                scaleGui(auber.world.map.keypadTexture, 0.9f, batch);
             }
             else {
                 Assets.fonts.fixedsys18.draw(
@@ -215,7 +205,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             }
         }
         // HEALTH BAR START
-        healthShapeRenderer = new ShapeRenderer();
+        /*healthShapeRenderer = new ShapeRenderer();
         healthShapeRenderer.setAutoShapeType(true);
         this.healthShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         // Draw bar background
@@ -234,7 +224,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                auber.getHealth() * 2f,
                40f
         );
-        this.healthShapeRenderer.end();
+        this.healthShapeRenderer.end();*/
         // Display health value inside the bar
         //Gdx.app.log("Remaining Health", Float.toString(auber.getHealth()));
         Assets.fonts.fixedsys18.draw(
