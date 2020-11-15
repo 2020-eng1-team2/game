@@ -127,6 +127,9 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 // TODO: Fix the draw locations of the pads
                 // Draw the pads
                 for (Vector2 wsPad : auber.world.map.teleportPads) {
+                    drawPad(padHighlight, auber.world.map.mapTexture, 0.9f, wsPad, 64f, 64f, batch);
+                }
+                /*for (Vector2 wsPad : auber.world.map.teleportPads) {
                     float gsPadX = (wsPad.x / auber.world.map.width) * gsDrawW + gsDrawX;
                     float gsPadY = (wsPad.y / auber.world.map.height) * gsDrawH + gsDrawY;
 
@@ -157,7 +160,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                                 64
                         );
                     }
-                }
+                }*/
 
                 Assets.fonts.fixedsys18.draw(
                         batch,
@@ -271,6 +274,46 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                     drawMapHeight
             );
         }
+    }
+
+    private void drawPad(Texture pad, Texture map, float cover, Vector2 offset, float x, float y, SpriteBatch batch) {
+        /* pad: pad texture to be drawn on screen
+        map: texture of the map (not drawn on screen)
+        cover: amount of screen to be covered by map
+        offset: the offset of the texture from the top left of the map (screen space)
+        x: width of texture IN PIXELS?
+        y: height of texture IN PIXELS?
+        batch: SpriteBatch renderer*/
+        float padAspectRatio = (pad.getWidth() * 1f)/(pad.getHeight() * 1f); // texture width / texture height
+        float mapAspectRatio = (map.getWidth() * 1f)/(map.getHeight() * 1f); // texture width / texture height
+        float currentAspectRatio = (Gdx.graphics.getWidth() * 1f)/(Gdx.graphics.getHeight() * 1f);
+        float defaultAspectRatio = 16f/9f;
+        float drawMapWidth;
+        float drawMapHeight;
+        Vector2 drawMapTL;
+        Vector2 ssOffset = auber.world.map.gameSpaceToPixelSpace(offset);
+        // If aspect ratio of screen is less than the aspect ratio of map texture, then the width of the texture
+        // needs to be 90% the width of the screen and vice versa
+        if (currentAspectRatio > mapAspectRatio) {
+            // Height of map is cover (90%) of screen height
+            drawMapHeight = 720f * cover;
+            drawMapWidth = (drawMapHeight/(currentAspectRatio/defaultAspectRatio)) * mapAspectRatio;
+            drawMapTL = new Vector2((1280f / 2f) - (0.5f * drawMapWidth), 720f - (720f * ((1f - cover)/2f)));
+        }
+        else{
+            drawMapWidth = 1280f * cover;
+            drawMapHeight = (drawMapWidth*(currentAspectRatio/defaultAspectRatio)) / mapAspectRatio;
+            drawMapTL = new Vector2(1280f * ((1f - cover)/2f), (720f / 2f) + (0.5f * drawMapHeight));
+        }
+        // draw pad
+        batch.draw(
+                pad,
+                drawMapTL.x + (drawMapWidth * (ssOffset.x/map.getWidth())),
+                drawMapTL.y - (drawMapHeight * (ssOffset.y/map.getHeight())),
+                x,
+                y
+        );
+        // TODO: Ensure pads drawn keep their circular shape when resizing screen
     }
 
     private void drawHealthBar(ShapeRenderer shapeRender){
