@@ -20,7 +20,7 @@ public class Auber {
      */
     public float movementSpeed = 3f;
 
-    public static final float WIDTH = 1f;
+    public static final float WIDTH = (883f/637f);
     public static final float HEIGHT = 2.25f;
 
     private float health = 100f;
