@@ -24,6 +24,8 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
     private final Texture padHighlight = new Texture(Gdx.files.internal("graphics/teleportHighlight.png"));
     private final Texture padHighlightActive = new Texture(Gdx.files.internal("graphics/teleportHighlightActive.png"));
 
+    ShapeRenderer healthShapeRenderer;
+
     public AuberKeyboardController(Auber auber) {
         this.auber = auber;
     }
@@ -173,7 +175,6 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             }
         }
         // KEYPAD UI START
-        // TODO: Move health bar code out of function
         if (isAtKeypad()) {
             if (this.isKeypadGuiOpen) {
                 // draw keypad like we did with the teleport gui
@@ -204,35 +205,15 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 this.auber.resetHealth();
             }
         }
-        // HEALTH BAR START
-        /*healthShapeRenderer = new ShapeRenderer();
-        healthShapeRenderer.setAutoShapeType(true);
-        this.healthShapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        // Draw bar background
-        healthShapeRenderer.setColor(Color.GRAY);
-        healthShapeRenderer.rect(
-                15f,
-                ssScreenH - 60f,
-                210f,
-                50f
-        );
-        // Draw the health bar
-        healthShapeRenderer.setColor(Color.GREEN);
-        healthShapeRenderer.rect(
-               20f,
-               ssScreenH - 55,
-               auber.getHealth() * 2f,
-               40f
-        );
-        this.healthShapeRenderer.end();*/
-        // Display health value inside the bar
-        //Gdx.app.log("Remaining Health", Float.toString(auber.getHealth()));
+        batch.end();
+        // DRAW HEALTH BAR
+        drawHealthBar(healthShapeRenderer);
+        batch.begin();
         Assets.fonts.fixedsys18.draw(
                 batch,
                 "Health: " + auber.getHealth(),
                 10, ssScreenH - 50
         );
-        // HEALTH BAR END
     }
 
     private boolean isAtPad() {
@@ -290,5 +271,28 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                     drawMapHeight
             );
         }
+    }
+
+    private void drawHealthBar(ShapeRenderer shapeRender){
+        shapeRender = new ShapeRenderer();
+        shapeRender.setAutoShapeType(true);
+        shapeRender.begin(ShapeRenderer.ShapeType.Filled);
+        // Draw bar background
+        shapeRender.setColor(Color.GRAY);
+        shapeRender.rect(
+                15f,
+                Gdx.graphics.getHeight() - 60f,
+                210f,
+                50f
+        );
+        // Draw the health bar
+        shapeRender.setColor(Color.GREEN);
+        shapeRender.rect(
+                20f,
+                Gdx.graphics.getHeight() - 55,
+                auber.getHealth() * 2f,
+                40f
+        );
+        shapeRender.end();
     }
 }
