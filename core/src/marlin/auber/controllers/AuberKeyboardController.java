@@ -124,43 +124,11 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 float gsDrawY = ssScreenH * 0.05f;
                 scaleGui(auber.world.map.mapTexture, 0.9f, batch);
 
-                // TODO: Add pad highlights with mouse over
+                // TODO: Tidy up drawPad function?
                 // Draw the pads
                 for (Vector2 wsPad : auber.world.map.teleportPads) {
-                    drawPad(padHighlight, auber.world.map.mapTexture, 0.9f, wsPad, 64f, 64f, batch);
+                    drawPad(padHighlight, auber.world.map.mapTexture, padHighlightActive, 0.9f, wsPad, batch);
                 }
-                /*for (Vector2 wsPad : auber.world.map.teleportPads) {
-                    float gsPadX = (wsPad.x / auber.world.map.width) * gsDrawW + gsDrawX;
-                    float gsPadY = (wsPad.y / auber.world.map.height) * gsDrawH + gsDrawY;
-
-                    float ssMouseX = Gdx.input.getX();
-                    float ssMouseY = Gdx.input.getY();
-
-                    float gsMouseY = ssScreenH - ssMouseY;
-
-                    if (Vector2.dst2(gsPadX, gsPadY, ssMouseX, gsMouseY) < Math.pow(64, 2)) {
-                        batch.draw(
-                                padHighlightActive,
-                                gsPadX - 32,
-                                gsPadY - 32,
-                                64,
-                                64
-                        );
-                        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                            // Teleport!
-                            auber.teleport(wsPad);
-                            isTeleportGuiOpen = false;
-                        }
-                    } else {
-                        batch.draw(
-                                padHighlight,
-                                gsPadX - 32,
-                                gsPadY - 32,
-                                64,
-                                64
-                        );
-                    }
-                }*/
 
                 Assets.fonts.fixedsys18.draw(
                         batch,
@@ -276,25 +244,29 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         }
     }
 
-    private void drawPad(Texture pad, Texture map, float cover, Vector2 offset, float x, float y, SpriteBatch batch) {
+    private void drawPad(Texture pad, Texture map, Texture highlight, float cover, Vector2 offset, SpriteBatch batch) {
         /* pad: pad texture to be drawn on screen
         map: texture of the map (not drawn on screen)
+        highlight: highlight pad texture to be drawn
         cover: amount of screen to be covered by map
         offset: the offset of the texture from the top left of the map (screen space)
-        x: width of texture IN PIXELS?
-        y: height of texture IN PIXELS?
         batch: SpriteBatch renderer*/
-        float padAspectRatio = (pad.getWidth() * 1f)/(pad.getHeight() * 1f); // texture width / texture height
         float mapAspectRatio = (map.getWidth() * 1f)/(map.getHeight() * 1f); // texture width / texture height
         float currentAspectRatio = (Gdx.graphics.getWidth() * 1f)/(Gdx.graphics.getHeight() * 1f);
         float defaultAspectRatio = 16f/9f;
+
         float drawMapWidth;
         float drawMapHeight;
         float padDrawWidth;
         float padDrawHeight;
+
         Vector2 drawMapTL;
         Vector2 ssOffset = auber.world.map.gameSpaceToPixelSpace(offset);
         Vector2 drawPosition;
+
+        float ssMouseX = Gdx.input.getX();
+        float ssMouseY = Gdx.input.getY();
+        float gsMouseY = Gdx.graphics.getHeight() - ssMouseY;
         // If aspect ratio of screen is less than the aspect ratio of map texture, then the width of the texture
         // needs to be 90% the width of the screen and vice versa
         if (currentAspectRatio > mapAspectRatio) {
@@ -302,6 +274,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             drawMapHeight = 720f * cover;
             drawMapWidth = (drawMapHeight/(currentAspectRatio/defaultAspectRatio)) * mapAspectRatio;
             drawMapTL = new Vector2((1280f / 2f) - (0.5f * drawMapWidth), 720f - (720f * ((1f - cover)/2f)));
+            // pad diameter is 1/15th of the default screen height
             padDrawHeight = 720f / 15f;
             padDrawWidth = padDrawHeight/(currentAspectRatio/defaultAspectRatio);
         }
@@ -309,18 +282,34 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             drawMapWidth = 1280f * cover;
             drawMapHeight = (drawMapWidth*(currentAspectRatio/defaultAspectRatio)) / mapAspectRatio;
             drawMapTL = new Vector2(1280f * ((1f - cover)/2f), (720f / 2f) + (0.5f * drawMapHeight));
+            // pad diameter is 1/15th of the default screen width
             padDrawWidth = 1280f / 15f;
             padDrawHeight = padDrawWidth * (currentAspectRatio/defaultAspectRatio);
         }
         drawPosition = new Vector2(drawMapTL.x + (drawMapWidth * (ssOffset.x/map.getWidth())), drawMapTL.y - (drawMapHeight * (ssOffset.y/map.getHeight())));
         // draw pad
-        batch.draw(
-                pad,
-                drawPosition.x - (padDrawWidth / 2f),
-                drawPosition.y - (padDrawHeight / 2f),
-                padDrawWidth,
-                padDrawHeight
-        );
+        if (Vector2.dst2(drawPosition.x, drawPosition.y, ssMouseX * (1280f/Gdx.graphics.getWidth()), gsMouseY * (720f/Gdx.graphics.getHeight())) < Math.pow(32, 2)) {
+            batch.draw(
+                    highlight,
+                    drawPosition.x - (padDrawWidth / 2f),
+                    drawPosition.y - (padDrawHeight / 2f),
+                    padDrawWidth,
+                    padDrawHeight
+            );
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                // Teleport!
+                auber.teleport(offset);
+                isTeleportGuiOpen = false;
+            }
+        } else {
+            batch.draw(
+                    pad,
+                    drawPosition.x - (padDrawWidth / 2f),
+                    drawPosition.y - (padDrawHeight / 2f),
+                    padDrawWidth,
+                    padDrawHeight
+            );
+        }
     }
 
     private void drawHealthBar(ShapeRenderer shapeRender){
