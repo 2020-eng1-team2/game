@@ -3,6 +3,7 @@
   "topcoatTexture": "maps/map1/map1-topcoat.png",
   "collisionTexture": "maps/map1/map1-collision.png",
   "keypadTexture": "maps/map1/map1-keypad.png",
+  "keypadInfo": "keypad-info.json",
   "width": 57,
   "height": 71,
   "auberSpawn": [900, 630],
@@ -62,5 +63,21 @@
     "pqc2n2": ["pqc2n1"],
     "infirm1": ["mainCorridor1", "infirm2"],
     "infirm2": ["infirm1"]
-  }
+  },
+  "inputDraw": [220, 60],
+  "buttonPositions": [
+    [290, 230],
+    [402, 230],
+    [515, 230],
+    [290, 324],
+    [402, 324],
+    [515, 324],
+    [290, 418],
+    [402, 418],
+    [515, 418],
+    [290, 512],
+    [402, 512],
+    [515, 512]
+  ],
+  "hintDraw": [0, 0]
 }

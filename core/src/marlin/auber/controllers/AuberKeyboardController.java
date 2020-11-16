@@ -185,6 +185,23 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             this.isKeypadGuiOpen = false;
         }
         // KEYPAD UI END
+        // KEYPAD INPUT START
+        for (Vector2 button : auber.world.map.buttons) {
+            if(keypadCheckInput(auber.world.map.keypadTexture, 0.9f, button)){
+                int index = auber.world.map.buttons.indexOf(button);
+                if(index <= 8){
+                    Gdx.app.log("input kp", Integer.toString(index + 1));
+                }
+                else if (index == 9){
+                    Gdx.app.log("input kp", "clear");
+                }
+                else if (index == 10){
+                    Gdx.app.log("input kp", "0");
+                }
+                else {Gdx.app.log("input kp", "check");}
+            }
+        }
+        // KEYPAD INPUT END
     }
 
     private boolean isAtPad() {
@@ -244,11 +261,53 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         }
     }
 
+    private boolean keypadCheckInput(Texture keypad, float cover, Vector2 button){
+        /*
+        keypad: texture of keypad (not drawn on screen)
+        cover: amount of screen covered by keypad
+        button: screen position of button from top left
+        index: what index the button is
+         */
+        float keypadAR = keypad.getWidth() / keypad.getHeight();
+        float currentAR = (Gdx.graphics.getWidth() * 1f)/(Gdx.graphics.getHeight() * 1f);
+        float defaultAR = 16f/9f;
+
+        float drawKPWidth;
+        float drawKPHeight;
+
+        Vector2 drawMapTL;
+        Vector2 drawPosition;
+
+        float ssMouseX = Gdx.input.getX();
+        float ssMouseY = Gdx.input.getY();
+        float gsMouseY = Gdx.graphics.getHeight() - ssMouseY;
+
+        if (currentAR > keypadAR) {
+            // Height of map is cover (90%) of screen height
+            drawKPHeight = 720f * cover;
+            drawKPWidth = (drawKPHeight/(currentAR/defaultAR)) * keypadAR;
+            drawMapTL = new Vector2((1280f / 2f) - (0.5f * drawKPWidth), 720f - (720f * ((1f - cover)/2f)));
+        }
+        else{
+            drawKPWidth = 1280f * cover;
+            drawKPHeight = (drawKPWidth*(currentAR/defaultAR)) / keypadAR;
+            drawMapTL = new Vector2(1280f * ((1f - cover)/2f), (720f / 2f) + (0.5f * drawKPHeight));
+        }
+        drawPosition = new Vector2(drawMapTL.x + (drawKPWidth * (button.x/keypad.getWidth())), drawMapTL.y - (drawKPHeight * (button.y/keypad.getHeight())));
+        if (Vector2.dst2(drawPosition.x, drawPosition.y, ssMouseX * (1280f/Gdx.graphics.getWidth()), gsMouseY * (720f/Gdx.graphics.getHeight())) < Math.pow(40, 2)) {
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                //Gdx.app.log("button input", Integer.toString(index + 1));
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void drawPad(Texture pad, Texture map, Texture highlight, float cover, Vector2 offset, SpriteBatch batch) {
         /* pad: pad texture to be drawn on screen
         map: texture of the map (not drawn on screen)
         highlight: highlight pad texture to be drawn
-        cover: amount of screen to be covered by map
+        cover: amount of screen covered by map
         offset: the offset of the texture from the top left of the map (screen space)
         batch: SpriteBatch renderer*/
         float mapAspectRatio = (map.getWidth() * 1f)/(map.getHeight() * 1f); // texture width / texture height
