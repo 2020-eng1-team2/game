@@ -14,6 +14,8 @@ import marlin.auber.models.Auber;
 import marlin.auber.models.Map;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.util.List;
+
 import static marlin.auber.common.Helpers.*;
 
 public class AuberKeyboardController implements Controller, GuiRenderer {
@@ -122,13 +124,9 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
                 float gsDrawW = gsDrawH * (uvMapTexW / uvMapTexH);
                 float gsDrawX = (ssScreenW) * 0.5f - (gsDrawH * 0.5f);
                 float gsDrawY = ssScreenH * 0.05f;
-                scaleGui(auber.world.map.mapTexture, 0.9f, batch);
+                // Teleport GUI is drawn by below function, the function handles inputs
 
-                // TODO: Tidy up drawPad function?
-                // Draw the pads
-                for (Vector2 wsPad : auber.world.map.teleportPads) {
-                    drawPad(padHighlight, auber.world.map.mapTexture, padHighlightActive, 0.9f, wsPad, batch);
-                }
+                drawTeleportGui(padHighlight, auber.world.map.mapTexture, padHighlightActive, 0.9f, auber.world.map.teleportPads, batch);
 
                 Assets.fonts.fixedsys18.draw(
                         batch,
@@ -167,8 +165,17 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         // KEYPAD UI START
         if (isAtKeypad()) {
             if (this.isKeypadGuiOpen) {
-                // draw keypad like we did with the teleport gui
-                scaleGui(auber.world.map.keypadTexture, 0.9f, batch);
+                // drawKeypadGui() draws keypad and handles inputs
+                int input = drawKeypadGui(auber.world.map.keypadTexture, 0.9f, auber.world.map.buttons, batch);
+                if(input <= 9 && input >= 0) {
+                    Gdx.app.log("button press", Integer.toString(input));
+                }
+                else if(input == 10){
+                    Gdx.app.log("button press", "clear");
+                }
+                else if(input == 11){
+                    Gdx.app.log("button press", "check");
+                }
             }
             else {
                 Assets.fonts.fixedsys18.draw(
@@ -185,23 +192,6 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             this.isKeypadGuiOpen = false;
         }
         // KEYPAD UI END
-        // KEYPAD INPUT START
-        for (Vector2 button : auber.world.map.buttons) {
-            if(keypadCheckInput(auber.world.map.keypadTexture, 0.9f, button)){
-                int index = auber.world.map.buttons.indexOf(button);
-                if(index <= 8){
-                    Gdx.app.log("input kp", Integer.toString(index + 1));
-                }
-                else if (index == 9){
-                    Gdx.app.log("input kp", "clear");
-                }
-                else if (index == 10){
-                    Gdx.app.log("input kp", "0");
-                }
-                else {Gdx.app.log("input kp", "check");}
-            }
-        }
-        // KEYPAD INPUT END
     }
 
     private boolean isAtPad() {
@@ -226,6 +216,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         return false;
     }
 
+    // I'm leaving this function in case we need it in future
     private void scaleGui(Texture texture, float cover, SpriteBatch batch) {
         float mapAspectRatio = (texture.getWidth() * 1f)/(texture.getHeight() * 1f); // texture width / texture height
         float currentAspectRatio = (Gdx.graphics.getWidth() * 1f)/(Gdx.graphics.getHeight() * 1f);
@@ -261,22 +252,23 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         }
     }
 
-    private boolean keypadCheckInput(Texture keypad, float cover, Vector2 button){
+    private int drawKeypadGui(Texture keypad, float cover, List<Vector2> buttonPositions, SpriteBatch batch){
         /*
         keypad: texture of keypad (not drawn on screen)
         cover: amount of screen covered by keypad
         button: screen position of button from top left
         index: what index the button is
          */
-        float keypadAR = keypad.getWidth() / keypad.getHeight();
+        float keypadAR = (keypad.getWidth() * 1f) / (keypad.getHeight() * 1f);
         float currentAR = (Gdx.graphics.getWidth() * 1f)/(Gdx.graphics.getHeight() * 1f);
         float defaultAR = 16f/9f;
 
         float drawKPWidth;
         float drawKPHeight;
 
-        Vector2 drawMapTL;
+        Vector2 drawKPTL;
         Vector2 drawPosition;
+        Vector2 drawKPOrigin;
 
         float ssMouseX = Gdx.input.getX();
         float ssMouseY = Gdx.input.getY();
@@ -286,24 +278,43 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             // Height of map is cover (90%) of screen height
             drawKPHeight = 720f * cover;
             drawKPWidth = (drawKPHeight/(currentAR/defaultAR)) * keypadAR;
-            drawMapTL = new Vector2((1280f / 2f) - (0.5f * drawKPWidth), 720f - (720f * ((1f - cover)/2f)));
+            drawKPTL = new Vector2((1280f / 2f) - (0.5f * drawKPWidth), 720f - (720f * ((1f - cover)/2f)));
+            drawKPOrigin = new Vector2((1280f / 2f) - (0.5f * drawKPWidth), (720f * ((1f - cover)/2f)));
         }
         else{
             drawKPWidth = 1280f * cover;
             drawKPHeight = (drawKPWidth*(currentAR/defaultAR)) / keypadAR;
-            drawMapTL = new Vector2(1280f * ((1f - cover)/2f), (720f / 2f) + (0.5f * drawKPHeight));
+            drawKPTL = new Vector2(1280f * ((1f - cover)/2f), (720f / 2f) + (0.5f * drawKPHeight));
+            drawKPOrigin = new Vector2(1280f * ((1f - cover)/2f), (720f / 2f) - (0.5f * drawKPHeight));
         }
-        drawPosition = new Vector2(drawMapTL.x + (drawKPWidth * (button.x/keypad.getWidth())), drawMapTL.y - (drawKPHeight * (button.y/keypad.getHeight())));
-        if (Vector2.dst2(drawPosition.x, drawPosition.y, ssMouseX * (1280f/Gdx.graphics.getWidth()), gsMouseY * (720f/Gdx.graphics.getHeight())) < Math.pow(40, 2)) {
-            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                //Gdx.app.log("button input", Integer.toString(index + 1));
-                return true;
+        batch.draw(
+                keypad,
+                drawKPOrigin.x,
+                drawKPOrigin.y,
+                drawKPWidth,
+                drawKPHeight
+        );
+        for (Vector2 button : buttonPositions) {
+            drawPosition = new Vector2(drawKPTL.x + (drawKPWidth * (button.x / keypad.getWidth())), drawKPTL.y - (drawKPHeight * (button.y / keypad.getHeight())));
+            if (Vector2.dst2(drawPosition.x, drawPosition.y, ssMouseX * (1280f / Gdx.graphics.getWidth()), gsMouseY * (720f / Gdx.graphics.getHeight())) < Math.pow(40, 2)) {
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                    int index = buttonPositions.indexOf(button);
+                    if(index < 10){
+                        return index + 1;
+                    }
+                    else if(index == 10){
+                        return 0;
+                    }
+                    else {
+                        return 11;
+                    }
+                }
             }
         }
-        return false;
+        return -1;
     }
 
-    private void drawPad(Texture pad, Texture map, Texture highlight, float cover, Vector2 offset, SpriteBatch batch) {
+    private void drawTeleportGui(Texture pad, Texture map, Texture highlight, float cover, List<Vector2> padPositions, SpriteBatch batch) {
         /* pad: pad texture to be drawn on screen
         map: texture of the map (not drawn on screen)
         highlight: highlight pad texture to be drawn
@@ -320,8 +331,8 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         float padDrawHeight;
 
         Vector2 drawMapTL;
-        Vector2 ssOffset = auber.world.map.gameSpaceToPixelSpace(offset);
         Vector2 drawPosition;
+        Vector2 drawMapOrigin;
 
         float ssMouseX = Gdx.input.getX();
         float ssMouseY = Gdx.input.getY();
@@ -336,6 +347,7 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             // pad diameter is 1/15th of the default screen height
             padDrawHeight = 720f / 15f;
             padDrawWidth = padDrawHeight/(currentAspectRatio/defaultAspectRatio);
+            drawMapOrigin = new Vector2((1280f / 2f) - (0.5f * drawMapWidth), 720f * ((1f - cover)/2f));
         }
         else{
             drawMapWidth = 1280f * cover;
@@ -344,30 +356,41 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             // pad diameter is 1/15th of the default screen width
             padDrawWidth = 1280f / 15f;
             padDrawHeight = padDrawWidth * (currentAspectRatio/defaultAspectRatio);
+            drawMapOrigin = new Vector2(1280f * ((1f - cover)/2f), (720f / 2f) - (0.5f * drawMapHeight));
         }
-        drawPosition = new Vector2(drawMapTL.x + (drawMapWidth * (ssOffset.x/map.getWidth())), drawMapTL.y - (drawMapHeight * (ssOffset.y/map.getHeight())));
-        // draw pad
-        if (Vector2.dst2(drawPosition.x, drawPosition.y, ssMouseX * (1280f/Gdx.graphics.getWidth()), gsMouseY * (720f/Gdx.graphics.getHeight())) < Math.pow(32, 2)) {
-            batch.draw(
-                    highlight,
-                    drawPosition.x - (padDrawWidth / 2f),
-                    drawPosition.y - (padDrawHeight / 2f),
-                    padDrawWidth,
-                    padDrawHeight
-            );
-            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                // Teleport!
-                auber.teleport(offset);
-                isTeleportGuiOpen = false;
+        batch.draw(
+                map,
+                drawMapOrigin.x,
+                drawMapOrigin.y,
+                drawMapWidth,
+                drawMapHeight
+        );
+        for (Vector2 wsPad : padPositions) {
+            Vector2 ssOffset = auber.world.map.gameSpaceToPixelSpace(wsPad);
+            drawPosition = new Vector2(drawMapTL.x + (drawMapWidth * (ssOffset.x / map.getWidth())), drawMapTL.y - (drawMapHeight * (ssOffset.y / map.getHeight())));
+            // draw pad
+            if (Vector2.dst2(drawPosition.x, drawPosition.y, ssMouseX * (1280f / Gdx.graphics.getWidth()), gsMouseY * (720f / Gdx.graphics.getHeight())) < Math.pow(32, 2)) {
+                batch.draw(
+                        highlight,
+                        drawPosition.x - (padDrawWidth / 2f),
+                        drawPosition.y - (padDrawHeight / 2f),
+                        padDrawWidth,
+                        padDrawHeight
+                );
+                if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                    // Teleport!
+                    auber.teleport(wsPad);
+                    isTeleportGuiOpen = false;
+                }
+            } else {
+                batch.draw(
+                        pad,
+                        drawPosition.x - (padDrawWidth / 2f),
+                        drawPosition.y - (padDrawHeight / 2f),
+                        padDrawWidth,
+                        padDrawHeight
+                );
             }
-        } else {
-            batch.draw(
-                    pad,
-                    drawPosition.x - (padDrawWidth / 2f),
-                    drawPosition.y - (padDrawHeight / 2f),
-                    padDrawWidth,
-                    padDrawHeight
-            );
         }
     }
 
