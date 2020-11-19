@@ -8,15 +8,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class World {
+    private static World instance;
     public Viewport viewport;
 
     public Map map;
 
     public boolean debugMode = true;
 
-    public World(Map map) {
+    private World(Map map) {
         this.map = map;
         this.viewport = new ExtendViewport(20, 20);
+    }
+
+    public static void init(Map map) {
+        instance = new World(map);
+    }
+
+    public static World getWorld() {
+        return instance;
     }
 
     static class NavNode {
@@ -115,6 +124,29 @@ public class World {
         int v = Math.round(goalInPixelSpace.y);
         // And get the alpha
         return (map.collisionPixmap.getPixel(u, v) & 0x000F) != 0x000F;
+    }
+
+    private final Vector2 inBounds_temp_bl = new Vector2(0, 0);
+    private final Vector2 inBounds_temp_tl = new Vector2(0, 0);
+    private final Vector2 inBounds_temp_br = new Vector2(0, 0);
+    private final Vector2 inBounds_temp_tr = new Vector2(0, 0);
+
+    /**
+     * Returns if an axis-aligned-bounding-box <i>aabb</i> with its bottom-left corner at <i>position</i>
+     * would be in bounds in the world.
+     * @param position the bottom-left corner of <i>aabb</i>
+     * @param aabb an axis-aligned-bounding-box to test
+     * @return whether <i>aabb</i> at <i>position</i> is in bounds
+     */
+    public boolean inBounds(Vector2 position, Vector2 aabb) {
+        inBounds_temp_bl.set(position.x, position.y);
+        inBounds_temp_br.set(position.x + aabb.x, position.y);
+        inBounds_temp_tl.set(position.x, position.y + aabb.y);
+        inBounds_temp_tr.set(position.x+ aabb.x, position.y + aabb.y);
+        return inBounds(inBounds_temp_bl)
+                && inBounds(inBounds_temp_br)
+                && inBounds(inBounds_temp_tl)
+                && inBounds(inBounds_temp_tr);
     }
 
     public List<Vector2> findPathTo(Vector2 from, Vector2 target) {

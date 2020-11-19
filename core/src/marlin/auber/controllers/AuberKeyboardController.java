@@ -5,18 +5,18 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import marlin.auber.common.Assets;
 import marlin.auber.common.Controller;
-import marlin.auber.common.DebugRenderer;
 import marlin.auber.common.GuiRenderer;
 import marlin.auber.models.Auber;
 import marlin.auber.models.Map;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.List;
 
-import static marlin.auber.common.Helpers.*;
+import static marlin.auber.common.Helpers.hptw;
+import static marlin.auber.common.Helpers.vpth;
 
 public class AuberKeyboardController implements Controller, GuiRenderer {
     private final Auber auber;
@@ -43,18 +43,6 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
         // Reset delta
         delta.set(0, 0);
         futurePositionTest.set(auber.position.x, auber.position.y);
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            delta.y += 1;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            delta.x -= 1;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            delta.y -= 1;
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            delta.x += 1;
-        }
         // Scale it by movement speed and delta time
         delta.scl(auber.movementSpeed * Gdx.graphics.getDeltaTime());
         // Check collision
