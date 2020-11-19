@@ -15,7 +15,6 @@ public class Map implements Json.Serializable {
     public Texture mapTexture;
     public Texture topCoatTexture;
     public Texture collisionTexture;
-    public Texture keypadTexture;
 
     Pixmap collisionPixmap;
 
@@ -24,11 +23,6 @@ public class Map implements Json.Serializable {
 
     public Vector2 auberSpawn;
     public Vector2 healPoint;
-
-    // KEYPAD VARIABLES
-    public List<Vector2> buttons = new ArrayList<>();
-    public Vector2 drawText;
-    public Vector2 drawHint;
 
     public List<Vector2> keypads = new ArrayList<>();
     public List<Vector2> teleportPads = new ArrayList<>();
@@ -76,7 +70,6 @@ public class Map implements Json.Serializable {
         mapTexture = new Texture(Gdx.files.internal(val.getString("mapTexture")));
         topCoatTexture = new Texture(Gdx.files.internal(val.getString("topcoatTexture")));
         collisionTexture = new Texture(Gdx.files.internal(val.getString("collisionTexture")));
-        keypadTexture = new Texture(Gdx.files.internal(val.getString("keypadTexture")));
 
         TextureData texData = collisionTexture.getTextureData();
         texData.prepare();
@@ -150,19 +143,6 @@ public class Map implements Json.Serializable {
                     )
             );
         }
-
-        // KEYPAD INFO START
-        JsonValue buttons_Json = val.get("buttonPositions");
-        for (JsonValue child = buttons_Json.child; child != null; child = child.next) {
-            float[] pos = child.asFloatArray();
-            this.buttons.add(
-                    new Vector2(pos[0], pos[1])
-            );
-        }
-        JsonValue drawTxt = val.get("inputDraw");
-        drawText = new Vector2(drawTxt.getFloat(0), drawTxt.getFloat(1));
-        // KEYPAD INFO END
-
     }
 
 }
