@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import marlin.auber.common.*;
 import marlin.auber.common.System;
@@ -11,10 +12,7 @@ import marlin.auber.components.*;
 import marlin.auber.components.Renderer;
 import marlin.auber.models.Map;
 import marlin.auber.models.World;
-import marlin.auber.systems.KeyboardMovementSystem;
-import marlin.auber.systems.NPCAISystem;
-import marlin.auber.systems.RenderSystem;
-import marlin.auber.systems.ViewportTargetSystem;
+import marlin.auber.systems.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +40,8 @@ public class AuberGame extends ApplicationAdapter {
 					AnimSheet.create(Gdx.files.internal("graphics/auberWalkLeft.json")),
 					AnimSheet.create(Gdx.files.internal("graphics/auberWalkRight.json"))
 				),
-				new ViewportTarget()
+				new ViewportTarget(),
+				new ActivePlayerCharacter()
 		);
 
 		for (int i = 0; i < 10; i++) {
@@ -59,13 +58,23 @@ public class AuberGame extends ApplicationAdapter {
 			);
 		}
 
+		int i = 0;
+		for (Vector2 pad : World.getWorld().map.teleportPads) {
+			Entity.create(
+					"pad" + i++,
+					new Position(pad),
+					new TeleportTarget(3.0f)
+			);
+		}
+
 		RenderSystem renderSystem = new RenderSystem();
 
 		this.systems = Arrays.asList(
 				new KeyboardMovementSystem(),
 				new ViewportTargetSystem(),
 				renderSystem,
-				new NPCAISystem()
+				new NPCAISystem(),
+				new TeleportPadSystem()
 		);
 
 		this.disposables = Collections.singletonList(renderSystem);
