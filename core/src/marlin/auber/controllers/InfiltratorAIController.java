@@ -32,9 +32,9 @@ public class InfiltratorAIController implements Controller, DebugRenderer {
                 int x = (int) Math.round(Math.random() * infiltrator.world.map.width);
                 int y = (int) Math.round(Math.random() * infiltrator.world.map.height);
                 newTarget.set(x, y);
-            } while (!this.infiltrator.world.map.inBounds(newTarget));
+            } while (!this.infiltrator.world.inBounds(newTarget));
             this.target = newTarget;
-            this.path = this.infiltrator.world.map.findPathTo(this.infiltrator.position, this.target);
+            this.path = this.infiltrator.world.findPathTo(this.infiltrator.position, this.target);
             this.path.add(this.target);
             this.next = this.path.remove(0);
         } else {

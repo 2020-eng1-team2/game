@@ -65,13 +65,13 @@ public class AuberKeyboardController implements Controller, GuiRenderer {
             auber.walkDirection = Auber.WalkDirection.IDLE;
         } else {
             auber.walkDirection = delta.x > 0 ? Auber.WalkDirection.RIGHT : Auber.WalkDirection.LEFT;
-            if (auber.world.map.inBounds(futurePositionTest)) {
+            if (auber.world.inBounds(futurePositionTest)) {
                 // And move Auber
                 auber.position = auber.position.add(delta);
-            } else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x, futurePositionTest.y - delta.y))) {
+            } else if (auber.world.inBounds(new Vector2(futurePositionTest.x, futurePositionTest.y - delta.y))) {
                 // Y is Out of bounds
                 auber.position = auber.position.add(new Vector2(delta.x, 0f));
-            } else if (auber.world.map.inBounds(new Vector2(futurePositionTest.x - delta.x, futurePositionTest.y))) {
+            } else if (auber.world.inBounds(new Vector2(futurePositionTest.x - delta.x, futurePositionTest.y))) {
                 // X is Out of bounds
                 auber.position = auber.position.add(new Vector2(0f, delta.y));
             }

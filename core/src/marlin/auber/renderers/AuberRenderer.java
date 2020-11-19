@@ -59,7 +59,10 @@ public class AuberRenderer implements Renderer, GuiRenderer {
         if (auber.world.debugMode) {
             Assets.fonts.fixedsys18.draw(
                     batch,
-                    "Auber = " + this.auber.position.toString(),
+                    "Auber = "
+                            + this.auber.position.toString()
+                            + " <=> "
+                            + this.auber.world.map.gameSpaceToPixelSpace(this.auber.position).toString(),
                     10,
                     18
             );
