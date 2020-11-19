@@ -47,8 +47,18 @@ public class KeyboardMovementSystem implements System {
             scaledDelta.scl(kbm.movementSpeed * Gdx.graphics.getDeltaTime());
             futurePositionTest.set(pos.position);
             futurePositionTest.add(scaledDelta);
-            if (!delta.epsilonEquals(Vector2.Zero) && isLegalMovement(futurePositionTest, aabb)) {
-                pos.position.set(futurePositionTest);
+            if (!delta.epsilonEquals(Vector2.Zero)) {
+                if(isLegalMovement(futurePositionTest, aabb)){
+                    pos.position.set(futurePositionTest);
+                }
+                else if(isLegalMovement(new Vector2(futurePositionTest.x, futurePositionTest.y - scaledDelta.y), aabb)) {
+                    // y out of bounds
+                    pos.position.set(new Vector2(futurePositionTest.x, futurePositionTest.y - scaledDelta.y));
+                }
+                else if(isLegalMovement(new Vector2(futurePositionTest.x - scaledDelta.x, futurePositionTest.y), aabb)){
+                    // x out of bounds
+                    pos.position.set(new Vector2(futurePositionTest.x - scaledDelta.x, futurePositionTest.y));
+                }
                 if (wal != null) {
                     wal.direction = scaledDelta.x > 0 ? Walking.WalkDirection.RIGHT : Walking.WalkDirection.LEFT;
                 }
