@@ -53,7 +53,7 @@ public class TeleportPadSystem implements System {
             if (guiBatch.isDrawing()) {
                 guiBatch.end();
             }
-        }
+        } else {this.isTeleportGuiOpen = false;}
     }
 
     @SuppressWarnings("unchecked")
