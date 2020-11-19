@@ -2,6 +2,7 @@ package marlin.auber;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -19,8 +20,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class AuberGame extends ApplicationAdapter {
+	List<System> pauseSystems;
 	List<System> systems;
 	List<Disposable> disposables;
+	PauseMenuSystem pauseMenuSystem;
+
+	public enum State{
+		RUNNING, PAUSED
+	}
+
+	State game_state = State.RUNNING;
 	
 	@Override
 	public void create () {
@@ -68,8 +77,10 @@ public class AuberGame extends ApplicationAdapter {
 		}
 
 		RenderSystem renderSystem = new RenderSystem();
+		pauseMenuSystem = new PauseMenuSystem();
 
 		this.systems = Arrays.asList(
+				pauseMenuSystem,
 				new KeyboardMovementSystem(),
 				new ViewportTargetSystem(),
 				renderSystem,
@@ -77,19 +88,39 @@ public class AuberGame extends ApplicationAdapter {
 				new TeleportPadSystem()
 		);
 
+		this.pauseSystems = Arrays.asList(
+				pauseMenuSystem
+		);
+
 		this.disposables = Collections.singletonList(renderSystem);
 	}
 
 	@Override
 	public void render () {
-		// Tick timers
-		Timer.tickAll();
-		// Clear the screen
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		// Tick the systems
-		for (System syst : systems) {
-			syst.tick();
+		// If escape key is pressed, change game_state to State.PAUSED
+		if (pauseMenuSystem.checkIsPaused()) {
+			game_state = State.PAUSED;
+		}
+		else {game_state = State.RUNNING;}
+
+		switch (game_state) {
+			case RUNNING:
+				// Tick timers
+				Timer.tickAll();
+				// Clear the screen
+				Gdx.gl.glClearColor(0, 0, 0, 1);
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+				// Tick the systems
+				for (System syst : systems) {
+					syst.tick();
+				}
+				break;
+			case PAUSED:
+				// Pause screen render code
+				for (System syst : pauseSystems) {
+					syst.tick();
+				}
+				break;
 		}
 	}
 
