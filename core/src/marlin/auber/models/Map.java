@@ -2,20 +2,16 @@ package marlin.auber.models;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.TextureData;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import marlin.auber.common.DebugRenderer;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class Map implements Json.Serializable, DebugRenderer {
+public class Map implements Json.Serializable {
     public Texture mapTexture;
     public Texture topCoatTexture;
     public Texture collisionTexture;
@@ -169,24 +165,4 @@ public class Map implements Json.Serializable, DebugRenderer {
 
     }
 
-    @Override
-    public void renderDebug(ShapeRenderer shapeRenderer) {
-        shapeRenderer.setColor(Color.PINK);
-        for (World.NavNode node : this.navMesh.values()) {
-            for (World.NavNode link : node.links) {
-                shapeRenderer.line(
-                        node.position,
-                        link.position
-                );
-            }
-        }
-
-        shapeRenderer.setColor(Color.ORANGE);
-        for (Vector2 pad : this.teleportPads) {
-            shapeRenderer.x(
-                    pad,
-                    TELEPORT_PAD_USE_RANGE
-            );
-        }
-    }
 }

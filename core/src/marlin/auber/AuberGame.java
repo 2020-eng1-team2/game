@@ -12,6 +12,7 @@ import marlin.auber.components.Renderer;
 import marlin.auber.models.Map;
 import marlin.auber.models.World;
 import marlin.auber.systems.KeyboardMovementSystem;
+import marlin.auber.systems.NPCAISystem;
 import marlin.auber.systems.RenderSystem;
 import marlin.auber.systems.ViewportTargetSystem;
 
@@ -20,9 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class AuberGame extends ApplicationAdapter {
-	World world;
-	Entity auber;
-
 	List<System> systems;
 	List<Disposable> disposables;
 	
@@ -31,7 +29,8 @@ public class AuberGame extends ApplicationAdapter {
 		World.init(
 				Map.loadMap(Gdx.files.internal("maps/map1/map1.json"))
 		);
-		this.auber = Entity.create(
+
+		Entity.create(
 				"auber",
 				new Position(World.getWorld().map.auberSpawn),
 				new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
@@ -46,12 +45,27 @@ public class AuberGame extends ApplicationAdapter {
 				new ViewportTarget()
 		);
 
+		for (int i = 0; i < 10; i++) {
+			Entity.create(
+					"boris" + i,
+					new Position(World.getWorld().map.auberSpawn),
+					new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+					new Walking(),
+					new NPCAI(3.0f),
+					new Renderer(8),
+					new StaticRenderer(
+							new Texture(Gdx.files.internal("testChar2.png"))
+					)
+			);
+		}
+
 		RenderSystem renderSystem = new RenderSystem();
 
 		this.systems = Arrays.asList(
 				new KeyboardMovementSystem(),
 				new ViewportTargetSystem(),
-				renderSystem
+				renderSystem,
+				new NPCAISystem()
 		);
 
 		this.disposables = Collections.singletonList(renderSystem);

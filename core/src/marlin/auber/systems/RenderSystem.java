@@ -1,7 +1,6 @@
 package marlin.auber.systems;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Disposable;
 import marlin.auber.common.AnimSheet;
 import marlin.auber.common.Entity;
@@ -33,13 +32,13 @@ public class RenderSystem implements System, Disposable {
             map.height
         );
         for (Entity ent : renderables) {
+            Position pos = ent.getComponent(Position.class);
+            assert pos != null;
+            AABB aabb = ent.getComponent(AABB.class);
+            assert aabb != null; // TODO AABB-less entities?
             if (ent.hasComponent(WalkingRenderer.class)) {
                 WalkingRenderer wr = ent.getComponent(WalkingRenderer.class);
                 Walking wlk = ent.getComponent(Walking.class);
-                AABB aabb = ent.getComponent(AABB.class);
-                assert aabb != null;
-                Position pos = ent.getComponent(Position.class);
-                assert pos != null;
                 switch (wlk.direction) {
                     case IDLE:
                         batch.draw(
@@ -62,6 +61,15 @@ public class RenderSystem implements System, Disposable {
                         );
                         break;
                 }
+            } else if (ent.hasComponent(StaticRenderer.class)) {
+                StaticRenderer sr = ent.getComponent(StaticRenderer.class);
+                batch.draw(
+                    sr.tex,
+                    pos.position.x,
+                    pos.position.y,
+                    aabb.size.x,
+                    aabb.size.y
+                );
             }
         }
         batch.draw(
