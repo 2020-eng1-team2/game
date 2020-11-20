@@ -18,7 +18,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build Javadoc
-      run: ./gradlew build
+      run: ./gradlew javadoc
     - name: Deploy to Pages
       uses: JamesIves/github-pages-deploy-action@3.7.1
       with:
