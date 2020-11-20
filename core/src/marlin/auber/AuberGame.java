@@ -88,7 +88,8 @@ public class AuberGame extends ApplicationAdapter {
 				new ViewportTargetSystem(),
 				renderSystem,
 				new NPCAISystem(),
-				new TeleportPadSystem()
+				new TeleportPadSystem(),
+				new ArrestSystem()
 		);
 
 		this.pauseSystems = Arrays.asList(
