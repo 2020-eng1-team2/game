@@ -5,9 +5,9 @@ import marlin.auber.common.AnimSheet;
 import marlin.auber.common.Component;
 
 /**
- * A "marker component" for whichever entity should be the camera target.
+ * An entity that should have a walking or idle animation rendered.
  *
- * There should only be one of these in the world.
+ * Entities with this component MUST also have {@link Position} and {@link Walking}.
  */
 public class WalkingRenderer extends Component {
     public Texture idle;

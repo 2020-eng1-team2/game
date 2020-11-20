@@ -149,6 +149,14 @@ public class World {
                 && inBounds(inBounds_temp_tr);
     }
 
+    /**
+     * Find a path through the map from <i>from</i> to <i>to</i>.
+     *
+     * Uses A* pathfinding through the map's navigation nodes.
+     * @param from the starting point
+     * @param target the end goal
+     * @return a list of points to walk through
+     */
     public List<Vector2> findPathTo(Vector2 from, Vector2 target) {
         /*
          * Pathfinding in a nutshell:

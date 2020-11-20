@@ -3,6 +3,9 @@ package marlin.auber.components;
 import com.badlogic.gdx.math.Vector2;
 import marlin.auber.common.Component;
 
+/**
+ * A component for a thing in-game that has a 2d position.
+ */
 public class Position extends Component {
     public Vector2 position;
 
