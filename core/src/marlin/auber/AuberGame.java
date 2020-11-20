@@ -21,15 +21,17 @@ import java.util.List;
 
 public class AuberGame extends ApplicationAdapter {
 	List<System> pauseSystems;
+	List<System> menuSystems;
 	List<System> systems;
 	List<Disposable> disposables;
 	PauseMenuSystem pauseMenuSystem;
+	MainMenuSystem mainMenuSystem;
 
 	public enum State{
-		RUNNING, PAUSED
+		RUNNING, PAUSED, MENU
 	}
 
-	State game_state = State.RUNNING;
+	State game_state = State.MENU;
 	
 	@Override
 	public void create () {
@@ -78,6 +80,7 @@ public class AuberGame extends ApplicationAdapter {
 
 		RenderSystem renderSystem = new RenderSystem();
 		pauseMenuSystem = new PauseMenuSystem();
+		mainMenuSystem = new MainMenuSystem();
 
 		this.systems = Arrays.asList(
 				pauseMenuSystem,
@@ -92,16 +95,30 @@ public class AuberGame extends ApplicationAdapter {
 				pauseMenuSystem
 		);
 
+		this.menuSystems = Arrays.asList(
+				mainMenuSystem
+		);
+
 		this.disposables = Collections.singletonList(renderSystem);
 	}
 
 	@Override
 	public void render () {
-		// If escape key is pressed, change game_state to State.PAUSED
-		if (pauseMenuSystem.checkIsPaused()) {
-			game_state = State.PAUSED;
+		if (game_state == State.RUNNING || game_state == State.PAUSED) {
+			// If escape key is pressed, change game_state to State.PAUSED
+			if (pauseMenuSystem.checkIsPaused()) {
+				game_state = State.PAUSED;
+			} else {
+				game_state = State.RUNNING;
+			}
 		}
-		else {game_state = State.RUNNING;}
+		else {
+			// In Main menu
+			if (mainMenuSystem.checkStartGame()) {
+				// TODO: Reset Game state here
+				game_state = State.RUNNING;
+			}
+		}
 
 		switch (game_state) {
 			case RUNNING:
@@ -118,6 +135,11 @@ public class AuberGame extends ApplicationAdapter {
 			case PAUSED:
 				// Pause screen render code
 				for (System syst : pauseSystems) {
+					syst.tick();
+				}
+				break;
+			case MENU:
+				for (System syst : menuSystems) {
 					syst.tick();
 				}
 				break;
