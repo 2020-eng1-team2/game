@@ -23,7 +23,6 @@ public class TeleportPadSystem implements System {
     private final Texture map = World.getWorld().map.mapTexture;
     private final Texture pad = new Texture(Gdx.files.internal("graphics/teleportHighlight.png"));
     private final Texture highlight = new Texture(Gdx.files.internal("graphics/teleportHighlightActive.png"));
-    private final float cover = 0.9f;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -97,6 +96,7 @@ public class TeleportPadSystem implements System {
         float gsMouseY = Gdx.graphics.getHeight() - ssMouseY;
         // If aspect ratio of screen is less than the aspect ratio of map texture, then the width of the texture
         // needs to be 90% the width of the screen and vice versa
+        float cover = 0.9f;
         if (currentAspectRatio > mapAspectRatio) {
             // Height of map is cover (90%) of screen height
             drawMapHeight = 720f * cover;
@@ -155,7 +155,7 @@ public class TeleportPadSystem implements System {
     @SuppressWarnings("unchecked")
     private void teleportTo(Vector2 where) {
         Entity player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class, Position.class).get(0);
-        player.getComponent(Position.class).position = where;
+        player.getComponent(Position.class).position.set(where);
         // TODO
 //        player.getComponent(ActivePlayerCharacter.class).canTeleport = false;
     }
