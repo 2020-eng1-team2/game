@@ -12,7 +12,7 @@ public class ArrestSystem implements System {
     private Vector2 middle = new Vector2(Gdx.graphics.getWidth()*0.5f, Gdx.graphics.getHeight()*0.5f);
 
     public void tick() {
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             // Auber position in world space
             Vector2 auber = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(Position.class).position;
             // Get Mouse position in screen space
@@ -25,12 +25,14 @@ public class ArrestSystem implements System {
                 // Check if click hits NPC
                 Position pos = ent.getComponent(Position.class);
                 // TODO: Fix hit detection
-                if (pos.position.dst2(clickPos) <= Math.pow(1.8f, 2)) {
-                    // Arrest NPC
-                    //arrest(ent);
-                    Gdx.app.log("beam", "hit!");
-                    Gdx.app.log("id", ent.getId());
-                    break;
+                if (clickPos.x <= pos.position.x + ent.getComponent(AABB.class).size.x && clickPos.x >= pos.position.x) {
+                    // x is in bounds of NPC
+                    if (clickPos.y <= pos.position.y + ent.getComponent(AABB.class).size.y && clickPos.y >= pos.position.y) {
+                        // y is in bounds of NPC
+                        // Arrest NPC
+                        //arrest(ent);
+                        Gdx.app.log("coords", clickPos.toString());
+                    }
                 }
             }
         }
