@@ -27,27 +27,39 @@ public class TeleportPadSystem implements System {
     @Override
     @SuppressWarnings("unchecked")
     public void tick() {
+        ActivePlayerCharacter player = Entity
+                .getAllEntitiesWithComponents(ActivePlayerCharacter.class)
+                .get(0)
+                .getComponent(ActivePlayerCharacter.class);
         if (isInRangeOfPad()) {
             if (!guiBatch.isDrawing()) {
                 Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 guiBatch.begin();
             }
-            if (isTeleportGuiOpen) {
-                drawTeleportGui(
-                    Entity.getAllEntitiesWithComponents(Position.class, TeleportTarget.class)
-                        .stream()
-                        .map(x -> x.getComponent(Position.class).position)
-                        .collect(Collectors.toList())
-                );
+            if (player.teleportCooldown.isOver()) {
+                if (isTeleportGuiOpen) {
+                    drawTeleportGui(
+                            Entity.getAllEntitiesWithComponents(Position.class, TeleportTarget.class)
+                                    .stream()
+                                    .map(x -> x.getComponent(Position.class).position)
+                                    .collect(Collectors.toList())
+                    );
+                } else {
+                    Assets.fonts.fixedsys18.draw(
+                            guiBatch,
+                            "Press F to teleport",
+                            50, 50
+                    );
+                    if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
+                        this.isTeleportGuiOpen = true;
+                    }
+                }
             } else {
                 Assets.fonts.fixedsys18.draw(
                         guiBatch,
-                        "Press F to teleport",
+                        String.format("Teleport recharged in %.1f", player.teleportCooldown.getRemaining()),
                         50, 50
                 );
-                if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
-                    this.isTeleportGuiOpen = true;
-                }
             }
             if (guiBatch.isDrawing()) {
                 guiBatch.end();
@@ -157,6 +169,6 @@ public class TeleportPadSystem implements System {
         Entity player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class, Position.class).get(0);
         player.getComponent(Position.class).position.set(where);
         // TODO
-//        player.getComponent(ActivePlayerCharacter.class).canTeleport = false;
+        player.getComponent(ActivePlayerCharacter.class).teleportCooldown.reset(5f);
     }
 }
