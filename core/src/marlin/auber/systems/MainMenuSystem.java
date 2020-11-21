@@ -7,9 +7,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import marlin.auber.common.Assets;
 import marlin.auber.common.System;
+import marlin.auber.models.World;
 
 public class MainMenuSystem implements System {
-    private final Texture pad = new Texture(Gdx.files.internal("graphics/teleportHighlight.png"));
+    private final Texture title = new Texture(Gdx.files.internal("graphics/title.png"));
     private final SpriteBatch guiBatch = new SpriteBatch();
     private boolean startGame = false;
 
@@ -17,25 +18,14 @@ public class MainMenuSystem implements System {
 
     @Override
     public void tick() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             this.startGame = true;
         }
         if (!guiBatch.isDrawing()) {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             guiBatch.begin();
         }
-        font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-        guiBatch.draw(
-                pad,
-                50f,
-                50f,
-                100f, 100f
-        );
-        font.draw(
-                guiBatch,
-                "Press L to begin",
-                50, 50
-        );
+        World.getWorld().map.scaleGui(title, 1.0f, guiBatch);
         guiBatch.end();
     }
 

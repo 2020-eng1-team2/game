@@ -99,6 +99,7 @@ public class AuberGame extends ApplicationAdapter {
 		);
 
 		this.menuSystems = Arrays.asList(
+				renderSystem,
 				mainMenuSystem
 		);
 
