@@ -128,13 +128,13 @@ public class AuberGame extends ApplicationAdapter {
 			}
 		}
 
+		// Clear the screen
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		switch (game_state) {
 			case RUNNING:
 				// Tick timers
 				Timer.tickAll();
-				// Clear the screen
-				Gdx.gl.glClearColor(0, 0, 0, 1);
-				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 				// Tick the systems
 				for (System syst : systems) {
 					syst.tick();
