@@ -2,8 +2,10 @@ package marlin.auber.systems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import marlin.auber.common.Assets;
 import marlin.auber.common.Entity;
 import marlin.auber.common.System;
 import marlin.auber.components.*;
@@ -11,16 +13,35 @@ import marlin.auber.models.World;
 
 public class ArrestSystem implements System {
     private Viewport cam = World.getWorld().viewport;
+    private final SpriteBatch guiBatch = new SpriteBatch();
 
     private float wWidth;
     private float wHeight;
     private float sHeight;
     private float sWidth;
 
+    private boolean reloading = false;
+    private boolean reloadBeams = false;
+
+    public float reloadTime = 4f;
     public float ARREST_BEAM_RANGE = 6.0f;
 
     public void tick() {
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if (!guiBatch.isDrawing()) {
+            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            guiBatch.begin();
+        }
+        ActivePlayerCharacter player = Entity
+                .getAllEntitiesWithComponents(ActivePlayerCharacter.class)
+                .get(0)
+                .getComponent(ActivePlayerCharacter.class);
+        ArrestBeam arrestBeam = Entity
+                .getAllEntitiesWithComponents(ArrestBeam.class)
+                .get(0)
+                .getComponent(ArrestBeam.class);
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && arrestBeam.beamsLeft() != 0) {
+            arrestBeam.shootBeam();
+            Gdx.app.log("beams left", Integer.toString(arrestBeam.beamsLeft()));
             wWidth = cam.getWorldWidth();
             wHeight = cam.getWorldHeight();
             sHeight = (float) cam.getScreenHeight();
@@ -47,11 +68,36 @@ public class ArrestSystem implements System {
                             // y is in bounds of NPC
                             // Arrest NPC
                             arrest(ent, new Vector2((550f / 64f), 71f - (355f / 32f)));
+                            // Can only arrest one NPC per beam
                             break;
                         }
                     }
                 }
             }
+        }
+        else if (reloadBeams && player.reload.isOver()) {
+            arrestBeam.reloadBeam();
+            reloadBeams = false;
+        }
+        else if (arrestBeam.beamsLeft() == 0 && player.reload.isOver()) {
+            reloading = true;
+        }
+        else if (!player.reload.isOver()) {
+            // TODO: Fix reloading text
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    "Reloading...",
+                    50, 50
+            );
+            Gdx.app.log("print", "show reloading");
+            reloadBeams = true;
+        }
+        if (reloading) {
+            player.reload.reset(reloadTime);
+            reloading = false;
+        }
+        if (guiBatch.isDrawing()) {
+            guiBatch.end();
         }
     }
 

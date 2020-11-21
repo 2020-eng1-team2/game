@@ -55,7 +55,8 @@ public class AuberGame extends ApplicationAdapter {
 					AnimSheet.create(Gdx.files.internal("graphics/auberWalkRight.json"))
 				),
 				new ViewportTarget(),
-				new ActivePlayerCharacter()
+				new ActivePlayerCharacter(),
+				new ArrestBeam()
 		);
 
 		for (int i = 0; i < 10; i++) {

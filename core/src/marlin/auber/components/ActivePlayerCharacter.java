@@ -13,4 +13,6 @@ public class ActivePlayerCharacter extends Component {
      * A Timer for when the player can teleport. If the timer is zero, teleporting is allowed.
      */
     public Timer teleportCooldown = Timer.createTimer(0f);
+
+    public Timer reload = Timer.createTimer(0f);
 }
