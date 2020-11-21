@@ -15,4 +15,6 @@ public class ActivePlayerCharacter extends Component {
     public Timer teleportCooldown = Timer.createTimer(0f);
 
     public Timer reload = Timer.createTimer(0f);
+
+    public Timer healCooldown = Timer.createTimer(0f);
 }
