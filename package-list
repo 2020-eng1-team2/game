@@ -1,5 +1,5 @@
 marlin.auber
 marlin.auber.common
-marlin.auber.controllers
+marlin.auber.components
 marlin.auber.models
-marlin.auber.renderers
+marlin.auber.systems
