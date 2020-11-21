@@ -45,7 +45,7 @@ public class TeleportPadSystem implements System {
                                     .collect(Collectors.toList())
                     );
                 } else {
-                    Assets.fonts.fixedsys18.draw(
+                    Assets.fonts.cnr.draw(
                             guiBatch,
                             "Press F to teleport",
                             50, 50
@@ -55,7 +55,7 @@ public class TeleportPadSystem implements System {
                     }
                 }
             } else {
-                Assets.fonts.fixedsys18.draw(
+                Assets.fonts.cnr.draw(
                         guiBatch,
                         String.format("Teleport recharged in %.1f", player.teleportCooldown.getRemaining()),
                         50, 50

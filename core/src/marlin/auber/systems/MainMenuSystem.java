@@ -14,7 +14,7 @@ public class MainMenuSystem implements System {
     private final SpriteBatch guiBatch = new SpriteBatch();
     private boolean startGame = false;
 
-    private BitmapFont font = Assets.fonts.fixedsys18;
+    private BitmapFont font = Assets.fonts.cnr;
 
     @Override
     public void tick() {

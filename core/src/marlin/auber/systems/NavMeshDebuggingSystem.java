@@ -147,7 +147,7 @@ public class NavMeshDebuggingSystem implements System {
                     "Press C to clear the nav mesh (dangerous!). " +
                     "Press F9 to print the nav mesh to the console. " +
                     "Press F8 to exit edit mode.";
-            Assets.fonts.fixedsys18.draw(
+            Assets.fonts.cnr.draw(
                 batch,
                 draw,
                 50,
