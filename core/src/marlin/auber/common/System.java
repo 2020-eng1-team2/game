@@ -1,5 +1,5 @@
 package marlin.auber.common;
 
-public interface Controller {
+public interface System {
     void tick();
 }

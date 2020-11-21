@@ -6,78 +6,46 @@
   "keypadInfo": "keypad-info.json",
   "width": 57,
   "height": 71,
-  "auberSpawn": [900, 630],
-  "healPoint": [1100, 50],
+  "auberSpawn": [
+    1045,
+    615
+  ],
+  "healPoint": [
+    1345,
+    325
+  ],
   "teleportPads": [
-    [191, 293],
-    [830, 325],
-    [190, 870],
-    [960, 900],
-    [575, 1185]
+    [
+      448,
+      198
+    ],
+    [
+      1024,
+      198
+    ],
+    [
+      320,
+      645
+    ],
+    [
+      990,
+      550
+    ],
+    [
+      95,
+      1190
+    ],
+    [
+      607,
+      1157
+    ]
   ],
   "keypads": [
-  [785, 50]
+    [
+      785,
+      50
+    ]
   ],
-  "navNodes": {
-    "brig1": [480, 130],
-    "brig2": [480, 160],
-    "brig3": [480, 200],
-    "mainCorridor1": [650, 180],
-    "mainCorridor2": [650, 750],
-    "mainCorridor3": [650, 750],
-    "mainCorridor4": [650, 1150],
-    "cargo1": [650, 1350],
-    "cargo2": [300, 1300],
-    "cargo3": [1200, 1350],
-    "oxygen1": [300, 1100],
-    "power1": [480, 630],
-    "power2": [510, 750],
-    "pq1": [800, 640],
-    "pq2": [800, 810],
-    "pqc1n1": [1100, 640],
-    "pqc1n2": [1200, 640],
-    "pqc2n1": [1100, 860],
-    "pqc2n2": [1300, 860],
-    "infirm1": [800, 200],
-    "infirm2": [1000, 250]
-  },
-  "navLinks": {
-    "brig1": ["brig2", "brig3", "mainCorridor1"],
-    "brig2": ["brig1", "brig3"],
-    "brig3": ["brig2", "brig1"],
-    "mainCorridor1": ["brig1", "mainCorridor2", "infirm1"],
-    "mainCorridor2": ["mainCorridor1", "mainCorridor3"],
-    "mainCorridor3": ["mainCorridor2", "mainCorridor4", "power1", "power2", "pq1", "pq2"],
-    "mainCorridor4": ["mainCorridor3", "cargo1", "cargo3"],
-    "cargo1": ["mainCorridor4", "cargo2", "cargo3"],
-    "cargo2": ["oxygen1", "cargo1"],
-    "oxygen1": ["cargo2"],
-    "cargo3": ["cargo1", "mainCorridor4"],
-    "power1": ["mainCorridor3", "power2"],
-    "power2": ["mainCorridor3", "power1"],
-    "pq1": ["mainCorridor3", "pq2", "pqc1n1"],
-    "pq2": ["mainCorridor3", "pq1", "pqc2n1"],
-    "pqc1n1": ["pq1", "pqc1n2"],
-    "pqc1n2": ["pqc1n1"],
-    "pqc2n1": ["pq2", "pqc2n2"],
-    "pqc2n2": ["pqc2n1"],
-    "infirm1": ["mainCorridor1", "infirm2"],
-    "infirm2": ["infirm1"]
-  },
-  "inputDraw": [220, 60],
-  "buttonPositions": [
-    [290, 230],
-    [402, 230],
-    [515, 230],
-    [290, 324],
-    [402, 324],
-    [515, 324],
-    [290, 418],
-    [402, 418],
-    [515, 418],
-    [290, 512],
-    [402, 512],
-    [515, 512]
-  ],
-  "hintDraw": [0, 0]
+  "_comment": "Don't try to edit navNodes by hand. Use NavMeshDebuggingSystem instead.",
+  "navNodes":{"node10":[17,37],"node11":[10,37],"node12":[10,32],"node13":[17,29],"node14":[13,44],"node15":[10,41],"node16":[26,34],"node17":[27,23],"node18":[20,13],"node19":[30,13],"node0":[34,43],"node1":[37,35],"node4":[46,34],"node5":[49,31],"node2":[34,35],"node3":[41,34],"node8":[36,46],"node9":[44,45],"node6":[53,34],"node7":[40,44],"node20":[39,19],"node21":[17,9],"node22":[20,7],"node23":[7,10],"node24":[4,7],"node25":[7,18],"node26":[6,4],"node27":[26,49],"node28":[27,55],"node29":[29,60],"node1a":[33,19],"node1b":[30,8],"node1c":[41,8],"node1d":[52,8],"node1e":[46,16],"node1f":[53,16],"nodea":[46,47],"node30":[39,62],"noded":[26,43],"node31":[43,58],"nodee":[18,43],"node32":[48,60],"nodeb":[50,47],"node33":[48,58],"nodec":[50,44],"node34":[43,62],"node35":[38,58],"node36":[46,63],"nodef":[17,33],"node37":[35,11],"node2a":[24,60],"node2b":[17,59],"node2c":[12,59],"node2d":[15,58],"node2e":[14,62],"node2f":[33,60]},"navLinks":{"node10":["nodef","nodee","node11"],"node11":["node10","node15","node12"],"node12":["nodef","node11"],"node13":["nodef"],"node14":["nodee","node15"],"node15":["node14","node11"],"node16":["noded","node17"],"node17":["node16","noded","node18","node19","node1a"],"node18":["node22","node1b","node17","node21","node19","node1a"],"node19":["node22","node1b","node17","node18","node21","node1a"],"node0":["node8","node2","node1","noded","node7"],"node1":["node0","node3","node2"],"node4":["node3","node6","node5"],"node5":["node4","node6"],"node2":["node0","node3","node1"],"node3":["node4","node2","node1"],"node8":["node0","node7"],"node9":["nodeb","nodea","nodec","node7"],"node6":["node4","node5"],"node7":["node0","node8","node9"],"node20":["node1e","node1a"],"node21":["node22","node23","node24","node18","node19"],"node22":["node1b","node18","node21","node19"],"node23":["node24","node25","node21"],"node24":["node23","node26","node21"],"node25":["node23"],"node26":["node24"],"node27":["node28","noded"],"node28":["node29","node2a","node27","noded"],"node29":["node28","node2a","node2f"],"node1a":["node20","node17","node18","node19"],"node1b":["node22","node37","node1c","node18","node19"],"node1c":["node1e","node37","node1b","node1d"],"node1d":["node1e","node1f","node1c"],"node1e":["node20","node1f","node1d","node1c"],"node1f":["node1e","node1d"],"nodea":["nodeb","nodec","node9"],"node30":["node36","node35","node34","node2f"],"noded":["node0","node28","nodee","node16","node27","node17"],"node31":["node36","node35","node34","node33"],"nodee":["node10","nodef","node14","noded"],"node32":["node36","node34","node33"],"nodeb":["nodea","nodec","node9"],"node33":["node31","node32","node36","node34"],"nodec":["nodeb","nodea","node9"],"node34":["node30","node31","node32","node36","node35","node33"],"node35":["node30","node31","node34","node2f"],"node36":["node30","node31","node32","node34","node33"],"nodef":["node10","nodee","node12","node13"],"node37":["node1b","node1c"],"node2a":["node28","node29","node2b"],"node2b":["node2d","node2e","node2a","node2c"],"node2c":["node2d","node2e","node2b"],"node2d":["node2e","node2b","node2c"],"node2e":["node2d","node2b","node2c"],"node2f":["node30","node29","node35"]}
 }

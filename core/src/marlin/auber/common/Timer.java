@@ -37,6 +37,10 @@ public class Timer {
         return this.remaining;
     }
 
+    public boolean isOver() {
+        return this.remaining == 0f;
+    }
+
     public void reset(float timeout) {
         this.remaining = timeout;
     }

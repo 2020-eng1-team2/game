@@ -3,122 +3,176 @@ package marlin.auber;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 import marlin.auber.common.*;
-import marlin.auber.controllers.AuberKeyboardController;
-import marlin.auber.controllers.InfiltratorAIController;
-import marlin.auber.models.Auber;
-import marlin.auber.models.Infiltrator;
+import marlin.auber.common.System;
+import marlin.auber.components.*;
+import marlin.auber.components.Renderer;
 import marlin.auber.models.Map;
 import marlin.auber.models.World;
-import marlin.auber.renderers.AuberRenderer;
-import marlin.auber.renderers.InfiltratorRenderer;
-import marlin.auber.renderers.MapBaseRenderer;
-import marlin.auber.renderers.MapTopRenderer;
+import marlin.auber.systems.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class AuberGame extends ApplicationAdapter {
-	World world;
-	Auber auber;
+	List<System> pauseSystems;
+	List<System> menuSystems;
+	List<System> systems;
+	List<Disposable> disposables;
+	PauseMenuSystem pauseMenuSystem;
+	MainMenuSystem mainMenuSystem;
 
-	List<Controller> activeControllers = new ArrayList<>();
+	boolean oneTimeMenu = false;
+	boolean oneTimeGame = false;
 
-	List<Renderer> activeRenderers = new ArrayList<>();
-	List<GuiRenderer> activeGuiRenderers = new ArrayList<>();
-	List<DebugRenderer> activeDebugRenderers = new ArrayList<>();
+	public enum State{
+		RUNNING, PAUSED, MENU
+	}
 
-	SpriteBatch batch;
-	SpriteBatch guiBatch;
-	ShapeRenderer debugShapeRenderer;
+	// Initial Game state
+	State game_state = State.MENU;
 	
 	@Override
 	public void create () {
-		this.world = new World(
+		World.init(
 				Map.loadMap(Gdx.files.internal("maps/map1/map1.json"))
 		);
-		this.auber = new Auber(this.world);
 
-		AuberKeyboardController auberKeyboardController = new AuberKeyboardController(this.auber);
-		activeControllers.add(auberKeyboardController);
-
-		AuberRenderer auberRenderer = new AuberRenderer(this.auber);
-
-		activeRenderers.add(new MapBaseRenderer(this.world));
-		activeRenderers.add(auberRenderer);
+		Entity.create(
+				"auber",
+				new Position(World.getWorld().map.auberSpawn),
+				new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+				new KeyboardMovement(3.0f),
+				new Walking(),
+				new Renderer(10),
+				new WalkingRenderer(
+					new Texture(Gdx.files.internal("graphics/auberStatic.png")),
+					AnimSheet.create(Gdx.files.internal("graphics/auberWalkLeft.json")),
+					AnimSheet.create(Gdx.files.internal("graphics/auberWalkRight.json"))
+				),
+				new ViewportTarget(),
+				new ActivePlayerCharacter()
+		);
 
 		for (int i = 0; i < 10; i++) {
-			Infiltrator boris = new Infiltrator(this.world);
-			InfiltratorAIController ai = new InfiltratorAIController(boris);
-			activeControllers.add(ai);
-			activeDebugRenderers.add(ai);
-			activeRenderers.add(new InfiltratorRenderer(boris));
+			Entity.create(
+					"boris" + i,
+					new Position(World.getWorld().map.auberSpawn),
+					new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+					new Walking(),
+					new NPCAI(3.0f),
+					new Renderer(8),
+					new StaticRenderer(
+							new Texture(Gdx.files.internal("testChar2.png"))
+					)
+			);
 		}
 
-		activeRenderers.add(new MapTopRenderer(this.world));
+		int i = 0;
+		for (Vector2 pad : World.getWorld().map.teleportPads) {
+			Entity.create(
+					"pad" + i++,
+					new Position(pad),
+					new TeleportTarget(3.0f)
+			);
+		}
 
-		activeGuiRenderers.add(auberRenderer);
-		activeGuiRenderers.add(auberKeyboardController);
+		RenderSystem renderSystem = new RenderSystem();
+		pauseMenuSystem = new PauseMenuSystem();
+		mainMenuSystem = new MainMenuSystem();
 
-		activeDebugRenderers.add(this.world.map);
+		this.systems = Arrays.asList(
+				pauseMenuSystem,
+				new ArrestSystem(),
+				new KeyboardMovementSystem(),
+				new ViewportTargetSystem(),
+				renderSystem,
+				new NavMeshDebuggingSystem(),
+				new NPCAISystem(),
+				new TeleportPadSystem()
+		);
 
-		batch = new SpriteBatch();
-		guiBatch = new SpriteBatch();
-		debugShapeRenderer = new ShapeRenderer();
-		debugShapeRenderer.setAutoShapeType(true);
+		this.pauseSystems = Arrays.asList(
+				renderSystem,
+				pauseMenuSystem
+		);
+
+		this.menuSystems = Arrays.asList(
+				mainMenuSystem
+		);
+
+		this.disposables = Collections.singletonList(renderSystem);
 	}
 
 	@Override
 	public void render () {
-		// Tick timers
-		Timer.tickAll();
-		// Tick the controllers
-		for (Controller controller : this.activeControllers) {
-			controller.tick();
+		if (game_state == State.RUNNING || game_state == State.PAUSED) {
+			// If escape key is pressed, change game_state to State.PAUSED
+			if (pauseMenuSystem.checkIsPaused()) {
+				game_state = State.PAUSED;
+				if (pauseMenuSystem.checkMenu()) {
+					game_state = State.MENU;
+					this.oneTimeMenu = true;
+				}
+			} else {
+				game_state = State.RUNNING;
+			}
 		}
+		else {
+			// In Main menu
+			if (mainMenuSystem.checkStartGame()) {
+				this.oneTimeGame = true;
+				game_state = State.RUNNING;
+			}
+		}
+
 		// Clear the screen
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		// Set the camera to Auber and apply it to OpenGL
-		this.world.viewport.getCamera().position.x = this.auber.position.x;
-		this.world.viewport.getCamera().position.y = this.auber.position.y;
-		this.world.viewport.apply();
-		batch.setProjectionMatrix(this.world.viewport.getCamera().combined);
-		// Render!
-		batch.begin();
-		for (Renderer renderer : this.activeRenderers) {
-			renderer.render(batch);
+		switch (game_state) {
+			case RUNNING:
+				if (this.oneTimeGame) {
+					this.oneTimeGame = false;
+					// TODO: Reset Game state here
+				}
+				// Tick timers
+				Timer.tickAll();
+				// Tick the systems
+				for (System syst : systems) {
+					syst.tick();
+				}
+				break;
+			case PAUSED:
+				// Pause screen render code
+				for (System syst : pauseSystems) {
+					syst.tick();
+				}
+				break;
+			case MENU:
+				if (this.oneTimeMenu) {
+					this.oneTimeMenu = false;
+					// TODO: Set up demo environment
+				}
+				for (System syst : menuSystems) {
+					syst.tick();
+				}
+				break;
 		}
-		batch.end();
-		// Draw debug
-		if (this.world.debugMode) {
-			this.debugShapeRenderer.setProjectionMatrix(this.world.viewport.getCamera().combined);
-			Gdx.gl.glLineWidth(4f);
-			this.debugShapeRenderer.begin();
-			for (DebugRenderer renderer : this.activeDebugRenderers) {
-				renderer.renderDebug(this.debugShapeRenderer);
-			}
-			this.debugShapeRenderer.end();
-		}
-		// Reset viewport for GUI
-		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		guiBatch.begin();
-		for (GuiRenderer gui : this.activeGuiRenderers) {
-			gui.renderGui(guiBatch);
-		}
-		guiBatch.end();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		this.world.viewport.update(width, height);
+		World.getWorld().viewport.update(width, height);
 	}
 
 	@Override
 	public void dispose () {
-		batch.dispose();
-		guiBatch.dispose();
+		for (Disposable d : this.disposables) {
+			d.dispose();
+		}
 	}
 }

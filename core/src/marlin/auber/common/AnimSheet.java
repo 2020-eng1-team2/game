@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
 
+/**
+ * A helper class for loading and playing spritesheet animations.
+ */
 public class AnimSheet implements Json.Serializable {
     private Texture tex;
     private int sheetRows;
@@ -18,11 +21,33 @@ public class AnimSheet implements Json.Serializable {
 
     private float stateTime = 0f;
 
+    /**
+     * Load an AnimSheet from the given JSON file.
+     *
+     * The JSON must have the following structure:
+     * <ul>
+     * <li>{@code spritesheet}: the internal path to a spritesheet file</li>
+     * <li>rows, cols: the number of rows and columns in the spritesheet</li>
+     * <li>frames: the total number of frames in the animation</li>
+     * <li>totalTime: the total time for one cycle of the animation</li>
+     * </ul>
+     *
+     * @param path a {@link FileHandle} to a JSON file describing this animation.
+     * @return the new AnimSheet
+     */
     public static AnimSheet create(FileHandle path) {
         Json json = new Json();
         return json.fromJson(AnimSheet.class, path);
     }
 
+    /**
+     * Get the next frame of the animation.
+     *
+     * This may return the previous frame, depending on the frame rate.
+     *
+     * @param looping should this animation loop
+     * @return the {@link TextureRegion} corresponding to the next animation frame
+     */
     public TextureRegion tickAndGet(boolean looping) {
         this.stateTime += Gdx.graphics.getDeltaTime();
         return this.anim.getKeyFrame(this.stateTime, looping);
@@ -76,8 +101,8 @@ public class AnimSheet implements Json.Serializable {
                 mode = Animation.PlayMode.LOOP;
         }
 
-        this.anim = new Animation<TextureRegion>(
-            this.totalTime / this.frames,
+        this.anim = new Animation<>(
+                this.totalTime / this.frames,
                 frames
         );
         this.anim.setPlayMode(mode);
