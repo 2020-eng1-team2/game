@@ -2,7 +2,6 @@ package marlin.auber;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
@@ -26,6 +25,9 @@ public class AuberGame extends ApplicationAdapter {
 	List<Disposable> disposables;
 	PauseMenuSystem pauseMenuSystem;
 	MainMenuSystem mainMenuSystem;
+
+	boolean oneTimeMenu = false;
+	boolean oneTimeGame = false;
 
 	public enum State{
 		RUNNING, PAUSED, MENU
@@ -99,7 +101,6 @@ public class AuberGame extends ApplicationAdapter {
 		);
 
 		this.menuSystems = Arrays.asList(
-				renderSystem,
 				mainMenuSystem
 		);
 
@@ -114,7 +115,7 @@ public class AuberGame extends ApplicationAdapter {
 				game_state = State.PAUSED;
 				if (pauseMenuSystem.checkMenu()) {
 					game_state = State.MENU;
-					Gdx.app.log("menu", "going to menu!");
+					this.oneTimeMenu = true;
 				}
 			} else {
 				game_state = State.RUNNING;
@@ -123,13 +124,17 @@ public class AuberGame extends ApplicationAdapter {
 		else {
 			// In Main menu
 			if (mainMenuSystem.checkStartGame()) {
-				// TODO: Reset Game state here
+				this.oneTimeGame = true;
 				game_state = State.RUNNING;
 			}
 		}
 
 		switch (game_state) {
 			case RUNNING:
+				if (this.oneTimeGame) {
+					this.oneTimeGame = false;
+					// TODO: Reset Game state here
+				}
 				// Tick timers
 				Timer.tickAll();
 				// Clear the screen
@@ -147,6 +152,10 @@ public class AuberGame extends ApplicationAdapter {
 				}
 				break;
 			case MENU:
+				if (this.oneTimeMenu) {
+					this.oneTimeMenu = false;
+					// TODO: Set up demo environment
+				}
 				for (System syst : menuSystems) {
 					syst.tick();
 				}
