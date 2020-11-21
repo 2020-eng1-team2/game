@@ -56,7 +56,8 @@ public class AuberGame extends ApplicationAdapter {
 				),
 				new ViewportTarget(),
 				new ActivePlayerCharacter(),
-				new ArrestBeam()
+				new ArrestBeam(),
+				new Health()
 		);
 
 		for (int i = 0; i < 10; i++) {

@@ -148,6 +148,12 @@ public class Map implements Json.Serializable {
         }
     }
 
+    /**
+     * A function to draw an image at the correct aspect ratio regardless of screen size / shape
+     * @param texture The texture to be drawn
+     * @param cover The percentage of the screen to be covered by image
+     * @param batch SpriteBatch to draw with
+     */
     public void scaleGui(Texture texture, float cover, SpriteBatch batch) {
         float mapAspectRatio = (texture.getWidth() * 1f)/(texture.getHeight() * 1f); // texture width / texture height
         float currentAspectRatio = (Gdx.graphics.getWidth() * 1f)/(Gdx.graphics.getHeight() * 1f);
