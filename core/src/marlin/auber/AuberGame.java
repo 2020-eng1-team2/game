@@ -31,6 +31,7 @@ public class AuberGame extends ApplicationAdapter {
 		RUNNING, PAUSED, MENU
 	}
 
+	// Initial Game state
 	State game_state = State.MENU;
 	
 	@Override
@@ -93,6 +94,7 @@ public class AuberGame extends ApplicationAdapter {
 		);
 
 		this.pauseSystems = Arrays.asList(
+				renderSystem,
 				pauseMenuSystem
 		);
 
@@ -109,6 +111,10 @@ public class AuberGame extends ApplicationAdapter {
 			// If escape key is pressed, change game_state to State.PAUSED
 			if (pauseMenuSystem.checkIsPaused()) {
 				game_state = State.PAUSED;
+				if (pauseMenuSystem.checkMenu()) {
+					game_state = State.MENU;
+					Gdx.app.log("menu", "going to menu!");
+				}
 			} else {
 				game_state = State.RUNNING;
 			}
