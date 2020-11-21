@@ -94,7 +94,7 @@ public class Map implements Json.Serializable {
         JsonValue navNodes = val.get("navNodes");
         for (JsonValue child = navNodes.child; child != null; child = child.next) {
             float[] pos = child.asFloatArray();
-            World.NavNode node = new World.NavNode(child.name, pixelSpaceToGameSpace(
+            World.NavNode node = new World.NavNode(child.name, new Vector2(
                     pos[0],
                     pos[1]
             ));
@@ -122,6 +122,8 @@ public class Map implements Json.Serializable {
                 source.links.add(target);
             }
         }
+
+        Gdx.app.log("Map", "Loaded navmesh: " + this.navMesh.size() + " nodes");
 
         JsonValue teleportPads = val.get("teleportPads");
         for (JsonValue child = teleportPads.child; child != null; child = child.next) {

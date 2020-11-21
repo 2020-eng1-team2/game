@@ -58,7 +58,7 @@ public class NavMeshDebuggingSystem implements System {
                 World.NavNode nearest = World.getWorld().map.navMesh.values()
                         .stream().min((o1, o2) -> Float.compare(o1.position.dst2(auberPos), o2.position.dst2(auberPos)))
                         .orElse(null);
-                if (nearest != null) {
+                if (nearest != null && !nearest.equals(activeNode)) {
                     activeNode.links.add(nearest);
                     nearest.links.add(activeNode);
                 }
@@ -102,15 +102,20 @@ public class NavMeshDebuggingSystem implements System {
         renderer.setProjectionMatrix(World.getWorld().viewport.getCamera().combined);
         renderer.setAutoShapeType(true);
         renderer.begin();
+        renderer.setColor(Color.PINK);
         for (World.NavNode node : World.getWorld().map.navMesh.values()) {
+            renderer.x(
+                node.position,
+                1
+            );
             if (node.equals(activeNode)) {
                 renderer.setColor(Color.ORANGE);
                 renderer.x(
-                    node.position,
-                    3
+                        node.position,
+                        3
                 );
+                renderer.setColor(Color.PINK);
             }
-            renderer.setColor(Color.PINK);
             for (World.NavNode link : node.links) {
                 renderer.line(
                     node.position.x,
