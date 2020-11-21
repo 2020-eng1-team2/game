@@ -70,6 +70,15 @@ public class NavMeshDebuggingSystem implements System {
                 World.getWorld().map.navMesh.remove(activeNode.name);
                 activeNode = null;
             }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.P) && activeNode != null) {
+                activeNode.position.set(auberPos);
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.J) && activeNode != null) {
+                for (World.NavNode node : World.getWorld().map.navMesh.values()) {
+                    node.links.remove(activeNode);
+                }
+                activeNode.links.clear();
+            }
             if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
                 World.getWorld().map.navMesh.clear();
                 activeNode = null;
@@ -132,6 +141,8 @@ public class NavMeshDebuggingSystem implements System {
             String draw = "Press N to create nav node at current position. " +
                     "Then walk up to another nav node and press L to link to it. " +
                     "Press K to switch active nav node to the one you're nearest to. " +
+                    "Press P to move the active node to where you're standing. " +
+                    "Press J to unlink the active node from all other nodes. " +
                     "Press B to delete the active node. " +
                     "Press C to clear the nav mesh (dangerous!). " +
                     "Press F9 to print the nav mesh to the console. " +

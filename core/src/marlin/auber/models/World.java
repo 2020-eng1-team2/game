@@ -31,12 +31,12 @@ public class World {
     public static class NavNode {
         public String name;
         public Vector2 position;
-        public List<NavNode> links;
+        public Set<NavNode> links;
 
         public NavNode(String name, Vector2 position) {
             this.name = name;
             this.position = position;
-            this.links = new ArrayList<>();
+            this.links = new HashSet<>();
         }
 
         @Override
