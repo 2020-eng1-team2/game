@@ -107,7 +107,7 @@ public class ArrestSystem implements System {
      * @param prison Vector2 (position) of the cell
      */
     private void arrest(Entity ent, Vector2 prison) {
-        // TODO: Arrest function (respawn in cell (No movement)/Teleport to cell (No movement))
+        // TODO: Arrest function (respawn in cell (No movement)/Teleport to cell (No movement)) and change navigation mesh
         ent.getComponent(Position.class).position = prison;
     }
 }
