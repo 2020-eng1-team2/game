@@ -21,4 +21,5 @@ public class Helpers {
     public static float vpth(float verticalPercentage) {
         return Gdx.graphics.getHeight() * verticalPercentage;
     }
+
 }

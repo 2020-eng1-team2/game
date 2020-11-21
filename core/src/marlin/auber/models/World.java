@@ -28,10 +28,10 @@ public class World {
         return instance;
     }
 
-    static class NavNode {
-        String name;
-        Vector2 position;
-        List<NavNode> links;
+    public static class NavNode {
+        public String name;
+        public Vector2 position;
+        public List<NavNode> links;
 
         public NavNode(String name, Vector2 position) {
             this.name = name;

@@ -30,7 +30,7 @@ public class Map implements Json.Serializable {
     public static final float TELEPORT_PAD_USE_RANGE = 2f;
     public static final float KEYPAD_USE_RANGE = 4f;
 
-    final java.util.Map<String, World.NavNode> navMesh = new HashMap<>();
+    public final java.util.Map<String, World.NavNode> navMesh = new HashMap<>();
 
     public Vector2 pixelSpaceToGameSpace(Vector2 pixel) {
         return pixelSpaceToGameSpace(pixel.x, pixel.y);
