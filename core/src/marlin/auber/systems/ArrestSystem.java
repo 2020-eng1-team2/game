@@ -78,63 +78,19 @@ public class ArrestSystem implements System {
             arrestBeam.shootBeam();
             Gdx.app.log("beams left", Integer.toString(arrestBeam.beamsLeft()));
             if (new Vector2().dst2(gsDelta) <= Math.pow(ARREST_BEAM_RANGE, 2)) {
-                if (arresting == true) {
-                    if (beginTimer) {
-                        player.beamTime.reset(beamTime);
-                        beginTimer = false;
-                    }
-                    Vector2 entPosition = arrestingEntity.getComponent(Position.class).position;
-                    Vector2 entSize = arrestingEntity.getComponent(AABB.class).size;
-                    if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                        if (clickPos.x <= entPosition.x + entSize.x && clickPos.x >= entPosition.x) {
-                            // x is in bounds of NPC
-                            if (clickPos.y <= entPosition.y + entSize.y && clickPos.y >= entPosition.y) {
-                                // y is in bounds of NPC
-                                if (player.beamTime.isOver()) {
-                                    // Arrest that man at once!
-                                    Gdx.app.log("arrest", "lock him away");
-                                    arresting = false;
-                                    arrest(arrestingEntity, new Vector2((550f / 64f), 71f - (355f / 32f)));
-                                }
-                                else {
-                                    if (guiBatch.isDrawing()) {
-                                        guiBatch.end();
-                                    }
-                                    // Draw beaming bar
-                                    shapeRenderer.setProjectionMatrix(World.getWorld().viewport.getCamera().combined);
-                                    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-                                    shapeRenderer.setColor(0, 1, 0, 1);
-                                    shapeRenderer.rect(entPosition.x, entPosition.y + entSize.y * 1.05f, entSize.x - (entSize.x * (player.beamTime.getRemaining() / beamTime)), entSize.y / 10f);
-                                    shapeRenderer.end();
-                                    // End Beaming bar
-                                    if (!guiBatch.isDrawing()) {
-                                        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                                        guiBatch.begin();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else {
-                        arresting = false;
-                        player.beamTime.reset(0f);
-                    }
-                }
-                else {
-                    for (Entity ent : Entity.getAllEntitiesWithComponents(NPCAI.class)) {
-                        // Check if click hits NPC
-                        Position pos = ent.getComponent(Position.class);
-                        if (clickPos.x <= pos.position.x + ent.getComponent(AABB.class).size.x && clickPos.x >= pos.position.x) {
-                            // x is in bounds of NPC
-                            if (clickPos.y <= pos.position.y + ent.getComponent(AABB.class).size.y && clickPos.y >= pos.position.y) {
-                                // y is in bounds of NPC
-                                // Begin arresting NPC
-                                arrestingEntity = ent;
-                                arresting = true;
-                                beginTimer = true;
-                                // Can only arrest one NPC per beam
-                                break;
-                            }
+                for (Entity ent : Entity.getAllEntitiesWithComponents(NPCAI.class)) {
+                    // Check if click hits NPC
+                    Position pos = ent.getComponent(Position.class);
+                    if (clickPos.x <= pos.position.x + ent.getComponent(AABB.class).size.x && clickPos.x >= pos.position.x) {
+                        // x is in bounds of NPC
+                        if (clickPos.y <= pos.position.y + ent.getComponent(AABB.class).size.y && clickPos.y >= pos.position.y) {
+                            // y is in bounds of NPC
+                            // Begin arresting NPC
+                            arrestingEntity = ent;
+                            arresting = true;
+                            beginTimer = true;
+                            // Can only arrest one NPC per beam
+                            break;
                         }
                     }
                 }
@@ -195,6 +151,7 @@ public class ArrestSystem implements System {
             }
             else {
                 arresting = false;
+                player.beamTime.reset(0f);
             }
         }
         if (beginReload) {
