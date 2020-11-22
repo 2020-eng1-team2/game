@@ -11,21 +11,33 @@ import marlin.auber.models.World;
 
 public class MainMenuSystem implements System {
     private final Texture title = new Texture(Gdx.files.internal("graphics/title.png"));
+    private final Texture tutorial = new Texture(Gdx.files.internal("graphics/tut.png"));
     private final SpriteBatch guiBatch = new SpriteBatch();
     private boolean startGame = false;
+    private boolean showTut = false;
 
     private BitmapFont font = Assets.fonts.cnr;
 
     @Override
     public void tick() {
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            this.startGame = true;
-        }
         if (!guiBatch.isDrawing()) {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             guiBatch.begin();
         }
-        World.getWorld().map.scaleGui(title, 1.0f, guiBatch);
+        if (this.showTut) {
+            // show tut
+            World.getWorld().map.scaleGui(tutorial, 0.9f, guiBatch);
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                this.startGame = true;
+            }
+        }
+        else {
+            // show title
+            World.getWorld().map.scaleGui(title, 1.0f, guiBatch);
+            if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                this.showTut = true;
+            }
+        }
         guiBatch.end();
     }
 

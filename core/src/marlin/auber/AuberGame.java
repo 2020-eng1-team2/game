@@ -94,7 +94,7 @@ public class AuberGame extends ApplicationAdapter {
 				renderSystem,
 				new ArrestSystem(),
 				new HealthSystem(),
-				new NavMeshDebuggingSystem(),
+				//new NavMeshDebuggingSystem(),
 				new NPCAISystem(),
 				new CellNPCAISystem(),
 				new TeleportPadSystem()
