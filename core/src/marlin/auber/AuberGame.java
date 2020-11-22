@@ -89,11 +89,11 @@ public class AuberGame extends ApplicationAdapter {
 
 		this.systems = Arrays.asList(
 				pauseMenuSystem,
-				new ArrestSystem(),
-				new HealthSystem(),
 				new KeyboardMovementSystem(),
 				new ViewportTargetSystem(),
 				renderSystem,
+				new ArrestSystem(),
+				new HealthSystem(),
 				new NavMeshDebuggingSystem(),
 				new NPCAISystem(),
 				new TeleportPadSystem()

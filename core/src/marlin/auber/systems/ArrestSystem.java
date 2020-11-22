@@ -20,7 +20,14 @@ public class ArrestSystem implements System {
     private float sHeight;
     private float sWidth;
 
-    private boolean reloading = false;
+    /**
+     * Used to set the reload timer once when wither reload button is pressed, or ammo goes down to zero.
+     */
+    private boolean beginReload = false;
+
+    /**
+     * Used once when the reload timer reaches zero to reset the beam count of the entity.
+     */
     private boolean reloadBeams = false;
 
     public float reloadTime = 4f;
@@ -31,6 +38,7 @@ public class ArrestSystem implements System {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             guiBatch.begin();
         }
+        // TODO: Add reload button
         ActivePlayerCharacter player = Entity
                 .getAllEntitiesWithComponents(ActivePlayerCharacter.class)
                 .get(0)
@@ -80,7 +88,7 @@ public class ArrestSystem implements System {
             reloadBeams = false;
         }
         else if (arrestBeam.beamsLeft() == 0 && player.reload.isOver()) {
-            reloading = true;
+            beginReload = true;
         }
         else if (!player.reload.isOver()) {
             // TODO: Fix reloading text
@@ -92,9 +100,9 @@ public class ArrestSystem implements System {
             Gdx.app.log("print", "show reloading");
             reloadBeams = true;
         }
-        if (reloading) {
+        if (beginReload) {
             player.reload.reset(reloadTime);
-            reloading = false;
+            beginReload = false;
         }
         if (guiBatch.isDrawing()) {
             guiBatch.end();
