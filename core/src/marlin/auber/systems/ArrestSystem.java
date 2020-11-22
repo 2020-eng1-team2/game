@@ -2,6 +2,8 @@ package marlin.auber.systems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -16,6 +18,7 @@ public class ArrestSystem implements System {
     private Viewport cam = World.getWorld().viewport;
     private final SpriteBatch guiBatch = new SpriteBatch();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private final GlyphLayout layout = new GlyphLayout();
 
     private Entity arrestingEntity;
     private boolean arresting = false;
@@ -100,15 +103,16 @@ public class ArrestSystem implements System {
             arrestBeam.reloadBeam();
             reloadBeams = false;
         }
-        else if (arrestBeam.beamsLeft() == 0 && player.reload.isOver()) {
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.R) && player.reload.isOver()) {
             beginReload = true;
         }
         else if (!player.reload.isOver()) {
-            // TODO: Fix reloading text
+            layout.setText(Assets.fonts.cnr, "Reloading...");
+            float width = layout.width;
             Assets.fonts.cnr.draw(
                     guiBatch,
                     "Reloading...",
-                    50, 50
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f), 50
             );
             reloadBeams = true;
         }
@@ -158,6 +162,25 @@ public class ArrestSystem implements System {
             player.reload.reset(reloadTime);
             beginReload = false;
         }
+        if (player.reload.isOver() && arrestBeam.beamsLeft() > 1) {
+            // beams left -1 because of bug
+            layout.setText(Assets.fonts.cnr, "Beams left: " + (arrestBeam.beamsLeft() - 1));
+            float width = layout.width;
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    "Beams left: " + (arrestBeam.beamsLeft() - 1),
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f), 50
+            );
+        }
+        else if (arrestBeam.beamsLeft() <= 1 && player.reload.isOver()) {
+            layout.setText(Assets.fonts.cnr, "Press R to reload");
+            float width = layout.width;
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    "Press R to reload",
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f), 50
+            );
+        }
         if (guiBatch.isDrawing()) {
             guiBatch.end();
         }
@@ -169,10 +192,26 @@ public class ArrestSystem implements System {
      * @param prison Vector2 (position) of the cell
      */
     private void arrest(Entity ent, Vector2 prison) {
-        // TODO: Arrest function (respawn in cell (No movement)/Teleport to cell (No movement)) and change navigation mesh
-        // Destroy navigation entity and give it the prison one
-        ent.removeComponent(NPCAI.class);
-        ent.attachComponent(new CellNPCAI(3.0f));
-        ent.getComponent(Position.class).position = prison;
+        // Check if arrested entity is infiltrator
+        if (ent.hasComponent(Infiltrator.class)) {
+            // Infiltrator Arrested
+            String id = ent.getId();
+            ent.destroy();
+            Entity.create(
+                    id,
+                    new Position(prison),
+                    new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+                    new Walking(),
+                    new CellNPCAI(3.0f),
+                    new Renderer(8),
+                    new StaticRenderer(
+                            new Texture(Gdx.files.internal("testChar2.png"))
+                    )
+            );
+        }
+        else {
+            // Innocent
+            ent.getComponent(Position.class).position = prison;
+        }
     }
 }
