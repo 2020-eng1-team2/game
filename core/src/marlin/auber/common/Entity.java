@@ -2,11 +2,28 @@ package marlin.auber.common;
 
 import java.util.*;
 
+/**
+ * <p>An Entity is a container for components. The entity has no smarts itself, beyond
+ * keeping track of the components it has, the heavy lifting is done by components and systems.
+ *
+ * <p><b>Note that currently Entity does not support more than one component of the same type.</b>
+ * This may be changed in a future release.
+ *
+ * <p>To create an entity, use {@link Entity#create} with a unique ID and a set of components.
+ *
+ * <p>To get an entity, use {@link Entity#getEntityById} if you know the ID
+ * or {@link Entity#getAllEntitiesWithComponents} with the components you want.
+ * To later get a component, use {@link Entity#getComponent}.
+ *
+ * <p><b>DO NOT HOLD REFERENCES TO ENTITIES OR COMPONENTS IN ANY OTHER PLACE!</b>
+ * Otherwise, you run the risk of NullPointerExceptions as entities and components
+ * may come and go at any point in time.
+ */
 public class Entity {
     private final String id;
     private final Map<Class<? extends Component>, Component> components = new HashMap<>();
 
-    private static final Map<String, Entity> entities = new HashMap<>();
+    private static final Map<String, Entity> allEntities = new HashMap<>();
 
     public Entity(String id) {
         this.id = id;
@@ -20,7 +37,7 @@ public class Entity {
      */
     public static Entity create(String id, Component... components) {
         Entity e = new Entity(id);
-        entities.put(id, e);
+        allEntities.put(id, e);
         for (Component comp : components) {
             e.attachComponent(comp);
         }
@@ -34,6 +51,32 @@ public class Entity {
     public void attachComponent(Component comp) {
         this.components.put(comp.getClass(), comp);
         comp.attach(this);
+    }
+
+    /**
+     * Removes a component from this entity. Once this is called,
+     * the component is considered destroyed and can be garbage collected.
+     * @param type the type of component to remove
+     */
+    public void removeComponent(Class<? extends Component> type) {
+        Component old = this.components.remove(type);
+        if (old != null) {
+            old.destroy();
+        }
+    }
+
+    /**
+     * Destroys this entity and all attached components.<br>
+     *
+     * Once this method has been called, this entity will no longer appear in
+     * {@link Entity#getAllEntitiesWithComponents}.
+     */
+    public void destroy() {
+        for (Component comp : this.components.values()) {
+            comp.destroy();
+        }
+        this.components.clear();
+        allEntities.remove(this.id);
     }
 
     /**
@@ -64,6 +107,15 @@ public class Entity {
     }
 
     /**
+     * Get an Entity, given its ID.
+     * @param id the entity ID
+     * @return the entity
+     */
+    public static Entity getEntityById(String id) {
+        return allEntities.get(id);
+    }
+
+    /**
      * Returns all entities which have all the components in <i>componentTypes</i> attached.
      *
      * If this is called as {@code List<Entity> e = Entity.getAllEntitiesWithComponents(X.class)},
@@ -76,7 +128,7 @@ public class Entity {
     public static List<Entity> getAllEntitiesWithComponents(Class<? extends Component>... componentTypes) {
         List<Entity> result = new ArrayList<>();
         List<Class<? extends Component>> compTypes = Arrays.asList(componentTypes);
-        for (Entity e : entities.values()) {
+        for (Entity e : allEntities.values()) {
             if (e.components.keySet().containsAll(compTypes)) {
                 result.add(e);
             }

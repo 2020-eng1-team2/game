@@ -23,4 +23,14 @@ public abstract class Component {
         );
         allInstancesList.add(this);
     }
+
+    /**
+     * Destroys this component.
+     *
+     * <b>Do not call this directly!</b> Instead, use {@link Entity#removeComponent}.
+     */
+    protected void destroy() {
+        this.parent = null;
+        allInstances.get(this.getClass()).remove(this);
+    }
 }
