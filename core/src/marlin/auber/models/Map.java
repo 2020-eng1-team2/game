@@ -31,6 +31,7 @@ public class Map implements Json.Serializable {
     public static final float KEYPAD_USE_RANGE = 4f;
 
     public final java.util.Map<String, World.NavNode> navMesh = new HashMap<>();
+    public final java.util.Map<String, World.NavNode> cellNavMesh = new HashMap<>();
 
     public Vector2 pixelSpaceToGameSpace(Vector2 pixel) {
         return pixelSpaceToGameSpace(pixel.x, pixel.y);
@@ -124,6 +125,40 @@ public class Map implements Json.Serializable {
         }
 
         Gdx.app.log("Map", "Loaded navmesh: " + this.navMesh.size() + " nodes");
+
+        JsonValue cellNavNodes = val.get("cellNavNodes");
+        for (JsonValue child = cellNavNodes.child; child != null; child = child.next) {
+            float[] pos = child.asFloatArray();
+            World.NavNode node = new World.NavNode(child.name, new Vector2(
+                    pos[0],
+                    pos[1]
+            ));
+            this.cellNavMesh.put(node.name, node);
+        }
+
+        JsonValue cellNavLinks = val.get("cellNavLinks");
+        for (JsonValue link = cellNavLinks.child; link != null; link = link.next) {
+            World.NavNode source = this.cellNavMesh.get(link.name);
+            if (source == null) {
+                throw new RuntimeException(String.format(
+                        "Tried to build link from %s but it doesn't exist",
+                        link.name
+                ));
+            }
+            for (JsonValue child = link.child; child != null; child = child.next) {
+                World.NavNode target = this.cellNavMesh.get(child.asString());
+                if (target == null) {
+                    throw new RuntimeException(String.format(
+                            "Tried to build link from %s to %s but the target doesn't exist",
+                            link.name,
+                            child.asString()
+                    ));
+                }
+                source.links.add(target);
+            }
+        }
+
+        Gdx.app.log("Map", "Loaded cellnavmesh: " + this.cellNavMesh.size() + " nodes");
 
         JsonValue teleportPads = val.get("teleportPads");
         for (JsonValue child = teleportPads.child; child != null; child = child.next) {

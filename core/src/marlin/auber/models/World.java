@@ -155,9 +155,10 @@ public class World {
      * Uses A* pathfinding through the map's navigation nodes.
      * @param from the starting point
      * @param target the end goal
+     * @param navigationMesh the navigation mesh being used
      * @return a list of points to walk through
      */
-    public List<Vector2> findPathTo(Vector2 from, Vector2 target) {
+    public List<Vector2> findPathTo(Vector2 from, Vector2 target, java.util.Map<String, World.NavNode> navigationMesh) {
         /*
          * Pathfinding in a nutshell:
          * - First, find the nearest navnode
@@ -166,7 +167,7 @@ public class World {
          */
         NavNode nearestToStart = null;
         float nTSDist = Float.MAX_VALUE;
-        for (NavNode test : map.navMesh.values()) {
+        for (NavNode test : navigationMesh.values()) {
             float dist = from.dst2(test.position);
             if (dist < nTSDist) {
                 nearestToStart = test;
@@ -177,7 +178,7 @@ public class World {
 
         NavNode nearestToTarget = null;
         float nTTDist = Float.MAX_VALUE;
-        for (NavNode test : map.navMesh.values()) {
+        for (NavNode test : navigationMesh.values()) {
             float dist = target.dst2(test.position);
             if (dist < nTTDist) {
                 nearestToTarget = test;
@@ -187,7 +188,7 @@ public class World {
         assert nearestToTarget != null;
 
         // Avoid doing A* if we don't need to
-        if (map.navMesh.get(nearestToStart.name).links.contains(nearestToTarget)) {
+        if (navigationMesh.get(nearestToStart.name).links.contains(nearestToTarget)) {
             return new ArrayList<>(Arrays.asList(from, nearestToStart.position, nearestToTarget.position, target));
         }
 

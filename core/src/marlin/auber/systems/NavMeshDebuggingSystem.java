@@ -112,7 +112,7 @@ public class NavMeshDebuggingSystem implements System {
         renderer.setAutoShapeType(true);
         renderer.begin();
         renderer.setColor(Color.PINK);
-        for (World.NavNode node : World.getWorld().map.navMesh.values()) {
+        for (World.NavNode node : World.getWorld().map.cellNavMesh.values()) {
             renderer.x(
                 node.position,
                 1

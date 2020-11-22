@@ -170,6 +170,9 @@ public class ArrestSystem implements System {
      */
     private void arrest(Entity ent, Vector2 prison) {
         // TODO: Arrest function (respawn in cell (No movement)/Teleport to cell (No movement)) and change navigation mesh
+        // Destroy navigation entity and give it the prison one
+        ent.removeComponent(NPCAI.class);
+        ent.attachComponent(new CellNPCAI(3.0f));
         ent.getComponent(Position.class).position = prison;
     }
 }

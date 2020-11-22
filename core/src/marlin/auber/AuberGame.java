@@ -96,6 +96,7 @@ public class AuberGame extends ApplicationAdapter {
 				new HealthSystem(),
 				new NavMeshDebuggingSystem(),
 				new NPCAISystem(),
+				new CellNPCAISystem(),
 				new TeleportPadSystem()
 		);
 
@@ -109,8 +110,8 @@ public class AuberGame extends ApplicationAdapter {
 				new ViewportTargetSystem(),
 				renderSystem,
 				new NavMeshDebuggingSystem(),
-				new NPCAISystem(),
-				mainMenuSystem
+				mainMenuSystem,
+				new NPCAISystem()
 		);
 
 		this.disposables = Collections.singletonList(renderSystem);
