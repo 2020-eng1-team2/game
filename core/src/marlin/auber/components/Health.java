@@ -52,4 +52,12 @@ public class Health extends Component {
         }
         return false;
     }
+
+    /**
+     * Returns the max health of the entity.
+     * @return Returns max health of the entity.
+     */
+    public float getMaxHealth() {
+        return this.maxHealth;
+    }
 }
