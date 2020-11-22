@@ -26,7 +26,7 @@ public class AuberGame extends ApplicationAdapter {
 	PauseMenuSystem pauseMenuSystem;
 	MainMenuSystem mainMenuSystem;
 
-	boolean oneTimeMenu = false;
+	boolean oneTimeMenu = true;
 	boolean oneTimeGame = false;
 
 	public enum State{
@@ -105,6 +105,11 @@ public class AuberGame extends ApplicationAdapter {
 		);
 
 		this.menuSystems = Arrays.asList(
+				new KeyboardMovementSystem(),
+				new ViewportTargetSystem(),
+				renderSystem,
+				new NavMeshDebuggingSystem(),
+				new NPCAISystem(),
 				mainMenuSystem
 		);
 
@@ -140,7 +145,7 @@ public class AuberGame extends ApplicationAdapter {
 			case RUNNING:
 				if (this.oneTimeGame) {
 					this.oneTimeGame = false;
-					// TODO: Reset Game state here
+					gameReset();
 				}
 				// Tick timers
 				Timer.tickAll();
@@ -159,6 +164,7 @@ public class AuberGame extends ApplicationAdapter {
 				if (this.oneTimeMenu) {
 					this.oneTimeMenu = false;
 					// TODO: Set up demo environment
+					createDemo();
 				}
 				for (System syst : menuSystems) {
 					syst.tick();
@@ -177,5 +183,94 @@ public class AuberGame extends ApplicationAdapter {
 		for (Disposable d : this.disposables) {
 			d.dispose();
 		}
+	}
+
+	public void createDemo() {
+		// TODO: Fix the lack of walking
+		// Find Auber and delete it
+		Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).destroy();
+
+		// Find and Destroy all NPCs
+		for (Entity ent : Entity.getAllEntitiesWithComponents(NPCAI.class)){
+			ent.destroy();
+		}
+
+		// Create new Auber and give it AI components
+		Entity.create(
+				"auber",
+				new Position(World.getWorld().map.auberSpawn),
+				new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+				new Walking(),
+				new NPCAI(3.0f),
+				new Renderer(10),
+				new WalkingRenderer(
+						new Texture(Gdx.files.internal("graphics/auberStatic.png")),
+						AnimSheet.create(Gdx.files.internal("graphics/auberWalkLeft.json")),
+						AnimSheet.create(Gdx.files.internal("graphics/auberWalkRight.json"))
+				),
+				new ViewportTarget(),
+				new ActivePlayerCharacter()
+		);
+
+		// Create new NPCs
+		for (int i = 0; i < 10; i++) {
+			Entity.create(
+					"boris" + i,
+					new Position(World.getWorld().map.auberSpawn),
+					new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+					new Walking(),
+					new NPCAI(3.0f),
+					new Renderer(8),
+					new StaticRenderer(
+							new Texture(Gdx.files.internal("testChar2.png"))
+					)
+			);
+		}
+	}
+
+	public void gameReset() {
+		// Destroy Auber
+		Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).destroy();
+
+		// Destroy NPCs
+		for (Entity ent : Entity.getAllEntitiesWithComponents(NPCAI.class)){
+			ent.destroy();
+		}
+
+		// Create new Auber
+		Entity.create(
+				"auber",
+				new Position(World.getWorld().map.auberSpawn),
+				new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+				new KeyboardMovement(3.0f),
+				new Walking(),
+				new Renderer(10),
+				new WalkingRenderer(
+						new Texture(Gdx.files.internal("graphics/auberStatic.png")),
+						AnimSheet.create(Gdx.files.internal("graphics/auberWalkLeft.json")),
+						AnimSheet.create(Gdx.files.internal("graphics/auberWalkRight.json"))
+				),
+				new ViewportTarget(),
+				new ActivePlayerCharacter(),
+				new ArrestBeam(),
+				new Health()
+		);
+
+		// Create new NPCs
+		for (int i = 0; i < 10; i++) {
+			Entity.create(
+					"boris" + i,
+					new Position(World.getWorld().map.auberSpawn),
+					new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+					new Walking(),
+					new NPCAI(3.0f),
+					new Renderer(8),
+					new StaticRenderer(
+							new Texture(Gdx.files.internal("testChar2.png"))
+					)
+			);
+		}
+
+		// Any thing else I've missed goes here
 	}
 }
