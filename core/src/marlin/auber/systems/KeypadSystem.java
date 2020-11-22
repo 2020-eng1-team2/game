@@ -23,6 +23,9 @@ public class KeypadSystem implements System {
     private final float fixTime = 3f;
     public void tick() {
         // TODO: Not working full, will need tidy up once game logic is implemented
+        /**
+         * Player is not able to interact with keypad unless it is broken {@link KeypadTarget}.
+         */
         if (!guiBatch.isDrawing()) {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             guiBatch.begin();
