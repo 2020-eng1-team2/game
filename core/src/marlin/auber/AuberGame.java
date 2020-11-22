@@ -167,6 +167,8 @@ public class AuberGame extends ApplicationAdapter {
 					// TODO: Set up demo environment
 					createDemo();
 				}
+				// Tick timers
+				Timer.tickAll();
 				for (System syst : menuSystems) {
 					syst.tick();
 				}

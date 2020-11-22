@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import marlin.auber.common.Entity;
 import marlin.auber.common.System;
 import marlin.auber.components.CellNPCAI;
-import marlin.auber.components.NPCAI;
 import marlin.auber.components.Position;
 import marlin.auber.models.World;
 
