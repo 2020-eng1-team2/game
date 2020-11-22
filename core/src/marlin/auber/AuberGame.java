@@ -83,6 +83,15 @@ public class AuberGame extends ApplicationAdapter {
 			);
 		}
 
+		i = 0;
+		for (Vector2 kp : World.getWorld().map.keypads) {
+			Entity.create(
+					"kp" + i++,
+					new Position(kp),
+					new KeypadTarget(3.0f)
+			);
+		}
+
 		RenderSystem renderSystem = new RenderSystem();
 		pauseMenuSystem = new PauseMenuSystem();
 		mainMenuSystem = new MainMenuSystem();
@@ -97,7 +106,8 @@ public class AuberGame extends ApplicationAdapter {
 				//new NavMeshDebuggingSystem(),
 				new NPCAISystem(),
 				new CellNPCAISystem(),
-				new TeleportPadSystem()
+				new TeleportPadSystem(),
+				new KeypadSystem()
 		);
 
 		this.pauseSystems = Arrays.asList(
