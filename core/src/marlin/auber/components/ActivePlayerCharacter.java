@@ -17,4 +17,6 @@ public class ActivePlayerCharacter extends Component {
     public Timer reload = Timer.createTimer(0f);
 
     public Timer healCooldown = Timer.createTimer(0f);
+
+    public Timer beamTime = Timer.createTimer(0f);
 }

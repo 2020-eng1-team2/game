@@ -3,6 +3,7 @@ package marlin.auber.systems;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import marlin.auber.common.Assets;
@@ -14,6 +15,13 @@ import marlin.auber.models.World;
 public class ArrestSystem implements System {
     private Viewport cam = World.getWorld().viewport;
     private final SpriteBatch guiBatch = new SpriteBatch();
+    private final ShapeRenderer shapeRenderer = new ShapeRenderer();
+
+    private Entity arrestingEntity;
+    private boolean arresting = false;
+    private boolean beginTimer = false;
+
+    private final float beamTime = 1f;
 
     private float wWidth;
     private float wHeight;
@@ -47,37 +55,86 @@ public class ArrestSystem implements System {
                 .getAllEntitiesWithComponents(ArrestBeam.class)
                 .get(0)
                 .getComponent(ArrestBeam.class);
+
+        wWidth = cam.getWorldWidth();
+        wHeight = cam.getWorldHeight();
+        sHeight = (float) cam.getScreenHeight();
+        sWidth = (float) cam.getScreenWidth();
+
+        // Calculate middle of screen
+        Vector2 middle = new Vector2(sWidth*0.5f, sHeight*0.5f);
+        // Auber position in world space
+        Vector2 auber = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(Position.class).position;
+        // Get Mouse position in screen space
+        Vector2 click = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
+        // Find difference between click position and middle of the screen
+        Vector2 delta = new Vector2(click).sub(middle);
+        // Convert delta to game space
+        Vector2 gsDelta = new Vector2((this.wWidth / this.sWidth) * delta.x, (this.wHeight / this.sHeight) * delta.y);
+        // Add delta to auber position
+        Vector2 clickPos = new Vector2(auber).add(gsDelta);
+
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && arrestBeam.beamsLeft() != 0) {
             arrestBeam.shootBeam();
             Gdx.app.log("beams left", Integer.toString(arrestBeam.beamsLeft()));
-            wWidth = cam.getWorldWidth();
-            wHeight = cam.getWorldHeight();
-            sHeight = (float) cam.getScreenHeight();
-            sWidth = (float) cam.getScreenWidth();
-            // Calculate middle of screen
-            Vector2 middle = new Vector2(sWidth*0.5f, sHeight*0.5f);
-            // Auber position in world space
-            Vector2 auber = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(Position.class).position;
-            // Get Mouse position in screen space
-            Vector2 click = new Vector2(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
-            // Find difference between click position and middle of the screen
-            Vector2 delta = new Vector2(click).sub(middle);
-            // Convert delta to game space
-            Vector2 gsDelta = new Vector2((this.wWidth / this.sWidth) * delta.x, (this.wHeight / this.sHeight) * delta.y);
-            // Add delta to auber position
-            Vector2 clickPos = new Vector2(auber).add(gsDelta);
             if (new Vector2().dst2(gsDelta) <= Math.pow(ARREST_BEAM_RANGE, 2)) {
-                for (Entity ent : Entity.getAllEntitiesWithComponents(NPCAI.class)) {
-                    // Check if click hits NPC
-                    Position pos = ent.getComponent(Position.class);
-                    if (clickPos.x <= pos.position.x + ent.getComponent(AABB.class).size.x && clickPos.x >= pos.position.x) {
-                        // x is in bounds of NPC
-                        if (clickPos.y <= pos.position.y + ent.getComponent(AABB.class).size.y && clickPos.y >= pos.position.y) {
-                            // y is in bounds of NPC
-                            // Arrest NPC
-                            arrest(ent, new Vector2((550f / 64f), 71f - (355f / 32f)));
-                            // Can only arrest one NPC per beam
-                            break;
+                if (arresting == true) {
+                    if (beginTimer) {
+                        player.beamTime.reset(beamTime);
+                        beginTimer = false;
+                    }
+                    Vector2 entPosition = arrestingEntity.getComponent(Position.class).position;
+                    Vector2 entSize = arrestingEntity.getComponent(AABB.class).size;
+                    if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                        if (clickPos.x <= entPosition.x + entSize.x && clickPos.x >= entPosition.x) {
+                            // x is in bounds of NPC
+                            if (clickPos.y <= entPosition.y + entSize.y && clickPos.y >= entPosition.y) {
+                                // y is in bounds of NPC
+                                if (player.beamTime.isOver()) {
+                                    // Arrest that man at once!
+                                    Gdx.app.log("arrest", "lock him away");
+                                    arresting = false;
+                                    arrest(arrestingEntity, new Vector2((550f / 64f), 71f - (355f / 32f)));
+                                }
+                                else {
+                                    if (guiBatch.isDrawing()) {
+                                        guiBatch.end();
+                                    }
+                                    // Draw beaming bar
+                                    shapeRenderer.setProjectionMatrix(World.getWorld().viewport.getCamera().combined);
+                                    shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                                    shapeRenderer.setColor(0, 1, 0, 1);
+                                    shapeRenderer.rect(entPosition.x, entPosition.y + entSize.y * 1.05f, entSize.x - (entSize.x * (player.beamTime.getRemaining() / beamTime)), entSize.y / 10f);
+                                    shapeRenderer.end();
+                                    // End Beaming bar
+                                    if (!guiBatch.isDrawing()) {
+                                        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                                        guiBatch.begin();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        arresting = false;
+                        player.beamTime.reset(0f);
+                    }
+                }
+                else {
+                    for (Entity ent : Entity.getAllEntitiesWithComponents(NPCAI.class)) {
+                        // Check if click hits NPC
+                        Position pos = ent.getComponent(Position.class);
+                        if (clickPos.x <= pos.position.x + ent.getComponent(AABB.class).size.x && clickPos.x >= pos.position.x) {
+                            // x is in bounds of NPC
+                            if (clickPos.y <= pos.position.y + ent.getComponent(AABB.class).size.y && clickPos.y >= pos.position.y) {
+                                // y is in bounds of NPC
+                                // Begin arresting NPC
+                                arrestingEntity = ent;
+                                arresting = true;
+                                beginTimer = true;
+                                // Can only arrest one NPC per beam
+                                break;
+                            }
                         }
                     }
                 }
@@ -97,8 +154,48 @@ public class ArrestSystem implements System {
                     "Reloading...",
                     50, 50
             );
-            Gdx.app.log("print", "show reloading");
             reloadBeams = true;
+        }
+        else if (arresting == true) {
+            if (beginTimer) {
+                player.beamTime.reset(beamTime);
+                beginTimer = false;
+            }
+            Vector2 entPosition = arrestingEntity.getComponent(Position.class).position;
+            Vector2 entSize = arrestingEntity.getComponent(AABB.class).size;
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                if (clickPos.x <= entPosition.x + entSize.x && clickPos.x >= entPosition.x) {
+                    // x is in bounds of NPC
+                    if (clickPos.y <= entPosition.y + entSize.y && clickPos.y >= entPosition.y) {
+                        // y is in bounds of NPC
+                        if (player.beamTime.isOver()) {
+                            // Arrest that man at once!
+                            Gdx.app.log("arrest", "lock him away");
+                            arresting = false;
+                            arrest(arrestingEntity, new Vector2((550f / 64f), 71f - (355f / 32f)));
+                        }
+                        else {
+                            if (guiBatch.isDrawing()) {
+                                guiBatch.end();
+                            }
+                            // Draw beaming bar
+                            shapeRenderer.setProjectionMatrix(World.getWorld().viewport.getCamera().combined);
+                            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+                            shapeRenderer.setColor(0, 1, 0, 1);
+                            shapeRenderer.rect(entPosition.x, entPosition.y + entSize.y * 1.05f, entSize.x - (entSize.x * (player.beamTime.getRemaining() / beamTime)), entSize.y / 10f);
+                            shapeRenderer.end();
+                            // End Beaming bar
+                            if (!guiBatch.isDrawing()) {
+                                Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                                guiBatch.begin();
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                arresting = false;
+            }
         }
         if (beginReload) {
             player.reload.reset(reloadTime);

@@ -10,9 +10,9 @@ import marlin.auber.common.Component;
 public class ArrestBeam extends Component {
 
     /**
-     * The maximum beams the entity can have.
+     * The maximum beams the entity can have. (Set to desired value + 1) (Bug, needs fixing)
      */
-    private int mag_capacity = 5;
+    private int mag_capacity = 6;
     private int beams;
 
     public ArrestBeam() {

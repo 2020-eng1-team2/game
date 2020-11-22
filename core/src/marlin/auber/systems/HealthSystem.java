@@ -19,7 +19,7 @@ public class HealthSystem implements System {
         if (player.getComponent(Health.class).gameOver()){
             // TODO: Game Over (return to menu?)
         }
-        Gdx.app.log("health", Float.toString(player.getComponent(Health.class).getHealth()));
+        //Gdx.app.log("health", Float.toString(player.getComponent(Health.class).getHealth()));
         if (World.getWorld().map.healPoint.dst2(player.getComponent(Position.class).position) <= Math.pow(6, 2)) {
             // TODO: Heal distance
             if (Gdx.input.isKeyJustPressed(Input.Keys.F) && player.getComponent(ActivePlayerCharacter.class).healCooldown.isOver()) {
