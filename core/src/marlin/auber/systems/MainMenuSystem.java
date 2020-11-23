@@ -44,6 +44,7 @@ public class MainMenuSystem implements System {
     public boolean checkStartGame() {
         if (this.startGame) {
             this.startGame = false;
+            this.showTut = false;
             return true;
         }
         else {return false;}

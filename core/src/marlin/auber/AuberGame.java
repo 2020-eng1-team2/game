@@ -20,17 +20,23 @@ import java.util.List;
 
 public class AuberGame extends ApplicationAdapter {
 	List<System> pauseSystems;
+	List<System> winSystems;
+	List<System> loseSystems;
 	List<System> menuSystems;
 	List<System> systems;
 	List<Disposable> disposables;
 	PauseMenuSystem pauseMenuSystem;
 	MainMenuSystem mainMenuSystem;
+	WinScreenSystem winGameSystem;
+	LoseScreenSystem loseGameSystem;
+	HealthSystem healthSystem;
+	ScoreSystem scoreSystem;
 
 	boolean oneTimeMenu = true;
 	boolean oneTimeGame = false;
 
 	public enum State{
-		RUNNING, PAUSED, MENU
+		RUNNING, PAUSED, MENU, WIN, LOSE
 	}
 
 	// Initial Game state
@@ -98,6 +104,10 @@ public class AuberGame extends ApplicationAdapter {
 		RenderSystem renderSystem = new RenderSystem();
 		pauseMenuSystem = new PauseMenuSystem();
 		mainMenuSystem = new MainMenuSystem();
+		winGameSystem = new WinScreenSystem();
+		loseGameSystem = new LoseScreenSystem();
+		healthSystem = new HealthSystem();
+		scoreSystem = new ScoreSystem();
 
 		this.systems = Arrays.asList(
 				pauseMenuSystem,
@@ -105,18 +115,29 @@ public class AuberGame extends ApplicationAdapter {
 				new ViewportTargetSystem(),
 				renderSystem,
 				new ArrestSystem(),
-				new HealthSystem(),
+				healthSystem,
 				//new NavMeshDebuggingSystem(),
 				new NPCAISystem(),
 				new CellNPCAISystem(),
 				new TeleportPadSystem(),
 				new KeypadSystem(),
-				new EventSystem()
+				new EventSystem(),
+				scoreSystem
 		);
 
 		this.pauseSystems = Arrays.asList(
 				renderSystem,
 				pauseMenuSystem
+		);
+
+		this.winSystems = Arrays.asList(
+				renderSystem,
+				winGameSystem
+		);
+
+		this.loseSystems = Arrays.asList(
+				renderSystem,
+				loseGameSystem
 		);
 
 		this.menuSystems = Arrays.asList(
@@ -143,13 +164,33 @@ public class AuberGame extends ApplicationAdapter {
 				}
 			} else {
 				game_state = State.RUNNING;
+				if (healthSystem.isGameOver()) {
+					game_state = State.LOSE;
+				}
+				else if (scoreSystem.gameWin()) {
+					game_state = State.WIN;
+				}
 			}
 		}
-		else {
+		else if (game_state == State.MENU) {
 			// In Main menu
 			if (mainMenuSystem.checkStartGame()) {
 				this.oneTimeGame = true;
 				game_state = State.RUNNING;
+			}
+		}
+		else if (game_state == State.WIN) {
+			// In win screen
+			if (winGameSystem.toMainMenu()) {
+				this.oneTimeMenu = true;
+				game_state = State.MENU;
+			}
+		}
+		else {
+			// In lose screen
+			if (loseGameSystem.toMainMenu()) {
+				this.oneTimeMenu = true;
+				game_state = State.MENU;
 			}
 		}
 
@@ -178,12 +219,23 @@ public class AuberGame extends ApplicationAdapter {
 			case MENU:
 				if (this.oneTimeMenu) {
 					this.oneTimeMenu = false;
-					// TODO: Set up demo environment
 					createDemo();
 				}
 				// Tick timers
 				Timer.tickAll();
 				for (System syst : menuSystems) {
+					syst.tick();
+				}
+				break;
+			case WIN:
+				// Draw win text on screen
+				for (System syst : winSystems) {
+					syst.tick();
+				}
+				break;
+			case LOSE:
+				// Draw lose text on screen
+				for (System syst : loseSystems) {
 					syst.tick();
 				}
 				break;
@@ -209,6 +261,11 @@ public class AuberGame extends ApplicationAdapter {
 
 		// Find and Destroy all NPCs
 		for (Entity ent : Entity.getAllEntitiesWithComponents(NPCAI.class)){
+			ent.destroy();
+		}
+
+		// Find and Destroy all Prisoners
+		for (Entity ent : Entity.getAllEntitiesWithComponents(CellNPCAI.class)){
 			ent.destroy();
 		}
 
