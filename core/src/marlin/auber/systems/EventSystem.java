@@ -14,8 +14,7 @@ import java.util.List;
 import java.util.Random;
 
 // TODO: Fix bug where game ends when meltdown timer gets to zero while player is looking for infiltrator
-
-public class EventSystem implements System {
+public class EventSystem implements System, Resetable {
 
     /**
      * True if the infiltrator has been arrested, true by default
@@ -46,8 +45,6 @@ public class EventSystem implements System {
 
     private final SpriteBatch guiBatch = new SpriteBatch();
     private final GlyphLayout layout = new GlyphLayout();
-
-    ActivePlayerCharacter player;
 
     public void tick() {
         if (!guiBatch.isDrawing()) {
@@ -95,16 +92,26 @@ public class EventSystem implements System {
         }
         if (!infiltratorLastFrame && infilArrested) {
             // Infiltrator just arrested
+            Gdx.app.log("EventSystem", "Infil arrested; resetti");
             player.eventCooldown.reset(eventCooldownTimer);
         }
         // Check is event is happening
         if (noEvent() && player.eventCooldown.isOver()) {
             // No event is happening, start event
+            Gdx.app.log("EventSystem", "Starting event");
             this.startEvent = true;
         }
         else if (player.meltdownTime.isOver() && !noEvent()) {
             // Player lost, ship destroyed. End game
             // Reduces Auber's health by max health to end game
+            Gdx.app.log("EventSystem", "Ship melted down, boo!");
+            Gdx.app.log("EventSystem", String.format(
+                    "State: meltdown remaining %f, keypad %b, infil %b, noEvent %b",
+                    player.meltdownTime.getRemaining(),
+                    this.keypadLastFrame,
+                    this.infiltratorLastFrame,
+                    this.noEvent()
+            ));
             Health ent = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(Health.class);
             ent.decreaseHealth(ent.getMaxHealth());
         }
@@ -214,5 +221,16 @@ public class EventSystem implements System {
                 // TODO: Fix abilities
                 new SpeedAbility()
         );
+    }
+
+    @Override
+    public void reset() {
+        ActivePlayerCharacter player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(ActivePlayerCharacter.class);
+        player.meltdownTime.reset(0f);
+        player.eventCooldown.reset(eventCooldownTimer);
+        player.abilityCooldown.reset(abilityCooldownTimer);
+        player.abilityDuration.reset(abilityDurationTimer);
+        keypadFixed = true;
+        infilArrested = true;
     }
 }

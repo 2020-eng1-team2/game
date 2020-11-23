@@ -190,6 +190,11 @@ public class AuberGame extends ApplicationAdapter {
 			// In lose screen
 			if (loseGameSystem.toMainMenu()) {
 				this.oneTimeMenu = true;
+				for (System sys : this.systems) {
+					if (sys instanceof Resetable) {
+						((Resetable) sys).reset();
+					}
+				}
 				game_state = State.MENU;
 			}
 		}

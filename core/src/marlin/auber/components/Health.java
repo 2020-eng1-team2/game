@@ -1,5 +1,6 @@
 package marlin.auber.components;
 
+import com.badlogic.gdx.Gdx;
 import marlin.auber.common.Component;
 
 /**
@@ -47,7 +48,7 @@ public class Health extends Component {
      * @return Returns whether or not the entity's health is 0 or below.
      */
     public boolean gameOver() {
-        if(this.health <= 0f) {
+        if (this.health <= 0f) {
             return true;
         }
         return false;

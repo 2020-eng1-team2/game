@@ -7,13 +7,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import marlin.auber.common.Assets;
 import marlin.auber.common.Entity;
+import marlin.auber.common.Resetable;
 import marlin.auber.common.System;
 import marlin.auber.components.ActivePlayerCharacter;
 import marlin.auber.components.Health;
 import marlin.auber.components.Position;
 import marlin.auber.models.World;
 
-public class HealthSystem implements System {
+public class HealthSystem implements System, Resetable {
     private final SpriteBatch guiBatch = new SpriteBatch();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private final GlyphLayout layout = new GlyphLayout();
@@ -73,6 +74,14 @@ public class HealthSystem implements System {
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             player.getComponent(Health.class).decreaseHealth(5f);
         }
+    }
+
+    public void reset() {
+        this.gameOver = false;
+        Entity player = Entity
+                .getAllEntitiesWithComponents(Health.class)
+                .get(0);
+        player.getComponent(Health.class).resetHealth();
     }
 
     // if there is a bug, this may be causing it
