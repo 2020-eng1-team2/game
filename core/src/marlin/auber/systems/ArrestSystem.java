@@ -195,26 +195,14 @@ public class ArrestSystem implements System {
         // Check if arrested entity is infiltrator
         if (ent.hasComponent(Infiltrator.class)) {
             // Infiltrator Arrested
-            String id = ent.getId();
-            ent.destroy();
-            Entity.create(
-                    id,
-                    new Position(prison),
-                    new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
-                    new Walking(),
-                    new CellNPCAI(3.0f),
-                    new Renderer(8),
-                    new StaticRenderer(
-                            new Texture(Gdx.files.internal("testChar2.png"))
-                    )
-            );
-        }
-        else {
-            // Innocent
             ent.getComponent(Position.class).position = prison;
             // we attach CellNPCAI, otherwise they'll walk out of prison (through the wall)
             ent.removeComponent(NPCAI.class);
             ent.attachComponent(new CellNPCAI(3.0f));
+        }
+        else {
+            // Innocent
+            ent.getComponent(Position.class).position = prison;
         }
     }
 }
