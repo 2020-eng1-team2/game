@@ -73,8 +73,9 @@ public class EventSystem implements System {
         }
         else if (player.meltdownTime.isOver() && !noEvent()) {
             // Player lost, ship destroyed. End game
-            // TODO: Game over
-            Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(Health.class).decreaseHealth(100f);
+            // Reduces Auber's health by max health to end game
+            Health ent = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(Health.class);
+            ent.decreaseHealth(ent.getMaxHealth());
         }
         else if (!this.keypadFixed) {
             layout.setText(Assets.fonts.cnr, String.format("Time to meltdown: %.1f", player.meltdownTime.getRemaining()));
