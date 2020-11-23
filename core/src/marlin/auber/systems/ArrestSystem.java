@@ -205,6 +205,9 @@ public class ArrestSystem implements System {
         else {
             // Innocent
             ent.getComponent(Position.class).position = prison;
+            // Reset the AI state, so it finds a new path out of prison
+            ent.getComponent(NPCAI.class).state = NPCAI.State.STANDING_AROUND;
+            ent.getComponent(NPCAI.class).standingAroundTimer.reset(5f);
         }
     }
 }
