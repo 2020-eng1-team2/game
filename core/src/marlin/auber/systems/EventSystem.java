@@ -13,6 +13,8 @@ import marlin.auber.models.World;
 import java.util.List;
 import java.util.Random;
 
+// TODO: Fix bug where game ends when meltdown timer gets to zero while player is looking for infiltrator
+
 public class EventSystem implements System {
 
     /**

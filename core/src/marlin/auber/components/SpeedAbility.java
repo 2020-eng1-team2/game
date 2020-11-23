@@ -7,7 +7,7 @@ public class SpeedAbility extends Component {
         float defaultSpeed = this.parent.getComponent(NPCAI.class).movementSpeed;
         if (this.parent.getComponent(NPCAI.class).movementSpeed == defaultSpeed) {
             // Speed up
-            this.parent.getComponent(NPCAI.class).movementSpeed = defaultSpeed * 2f;
+            this.parent.getComponent(NPCAI.class).movementSpeed = defaultSpeed + 1f;
         }
         else {
             // Slow down
