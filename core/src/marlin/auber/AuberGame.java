@@ -38,7 +38,7 @@ public class AuberGame extends ApplicationAdapter {
 	
 	@Override
 	public void create () {
-		// TODO: Reduce loading times (Don't create entities here, create systems in resetGame())
+		// TODO: Reduce loading times (Don't create entities here, create systems in resetGame(), or reduce file size of sprites!)
 		World.init(
 				Map.loadMap(Gdx.files.internal("maps/map1/map1.json"))
 		);
