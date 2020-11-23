@@ -198,6 +198,7 @@ public class ArrestSystem implements System {
             ent.getComponent(Position.class).position = prison;
             // we attach CellNPCAI, otherwise they'll walk out of prison (through the wall)
             ent.removeComponent(NPCAI.class);
+            ent.removeComponent(Infiltrator.class);
             ent.attachComponent(new CellNPCAI(3.0f));
         }
         else {

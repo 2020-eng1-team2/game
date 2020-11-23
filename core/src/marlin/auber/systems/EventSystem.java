@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import marlin.auber.common.Assets;
-import marlin.auber.common.Component;
-import marlin.auber.common.Entity;
+import marlin.auber.common.*;
 import marlin.auber.common.System;
 import marlin.auber.components.*;
 import marlin.auber.models.World;
@@ -34,9 +32,11 @@ public class EventSystem implements System {
 
     private boolean eventPart1 = false;
     private boolean keypadLastFrame;
+    private boolean infiltratorLastFrame;
     private boolean startGame = true;
 
     private final float meltdownTimer = 60f;
+    private final float eventCooldownTimer = 15f;
 
     private final SpriteBatch guiBatch = new SpriteBatch();
     private final GlyphLayout layout = new GlyphLayout();
@@ -49,24 +49,30 @@ public class EventSystem implements System {
             guiBatch.begin();
         }
         keypadLastFrame = keypadFixed;
+        infiltratorLastFrame = infilArrested;
         ActivePlayerCharacter player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(ActivePlayerCharacter.class);
         if (startGame) {
             startGame = false;
-            player.eventCooldown.reset(15f);
+            player.eventCooldown.reset(eventCooldownTimer);
         }
         // Update event status
         updateArrests();
         updateKeypad();
         if (!keypadLastFrame && keypadFixed) {
             // Keypad just fixed
+            Gdx.app.log("kp", "kp fixed!!!");
             eventPart1 = true;
+        }
+        if (!infiltratorLastFrame && infilArrested) {
+            // Infiltrator just arrested
+            player.eventCooldown.reset(eventCooldownTimer);
         }
         // Check is event is happening
         if (noEvent() && player.eventCooldown.isOver()) {
             // No event is happening, start event
             this.startEvent = true;
         }
-        else if (player.meltdownTime.isOver()) {
+        else if (player.meltdownTime.isOver() && !noEvent()) {
             // Player lost, ship destroyed. End game
             // TODO: Game over
         }
@@ -83,13 +89,14 @@ public class EventSystem implements System {
         else if (!this.infilArrested) {
             Gdx.app.log("infil", "infil needs to be arrested");
         }
-        if (this.startEvent) {
+        if (this.startEvent && !eventPart1) {
             this.startEvent = false;
             startKeypadEvent();
             Gdx.app.log("kp", "kp started");
             // When keypad event ends, start infiltrator event by making eventPart1 true
         }
-        if (eventPart1 && keypadFixed) {
+        else if (eventPart1) {
+            this.keypadFixed = true;
             this.eventPart1 = false;
             startInfiltratorEvent();
         }
@@ -103,7 +110,7 @@ public class EventSystem implements System {
      * @return true if both have been sorted by the player
      */
     public boolean noEvent() {
-        if (this.infilArrested && this.keypadFixed) {
+        if (this.infiltratorLastFrame && this.keypadLastFrame) {
             return true;
         }
         else {
@@ -121,7 +128,6 @@ public class EventSystem implements System {
     private void updateKeypad() {
         for (Entity ent : Entity.getAllEntitiesWithComponents(KeypadTarget.class)) {
             if (ent.getComponent(KeypadTarget.class).isBroken) {
-                this.keypadFixed = false;
                 return;
             }
         }
@@ -155,15 +161,18 @@ public class EventSystem implements System {
         Entity.create(
                 "Infiltrator",
                 new Position(max),
-                new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+                new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
                 new Walking(),
                 new NPCAI(3.0f),
                 new Renderer(8),
-                new StaticRenderer(
-                        new Texture(Gdx.files.internal("testChar2.png"))
+                new WalkingRenderer(
+                        new Texture(Gdx.files.internal("graphics/infiltratorStatic.png")),
+                        AnimSheet.create(Gdx.files.internal("graphics/infiltratorWalkLeft.json")),
+                        AnimSheet.create(Gdx.files.internal("graphics/infiltratorWalkRight.json"))
                 ),
-                new Infiltrator(),
-                new SpeedAbility()
+                new Infiltrator()
+                // Fix abilities
+                //new SpeedAbility()
         );
     }
 }
