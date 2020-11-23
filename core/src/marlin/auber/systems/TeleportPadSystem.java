@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import marlin.auber.common.Assets;
 import marlin.auber.common.Entity;
+import marlin.auber.common.Globals;
 import marlin.auber.common.System;
 import marlin.auber.components.ActivePlayerCharacter;
 import marlin.auber.components.Position;
@@ -65,6 +66,9 @@ public class TeleportPadSystem implements System {
                 guiBatch.end();
             }
         } else {this.isTeleportGuiOpen = false;}
+        if (!Globals.blockClicks && isTeleportGuiOpen) {
+            Globals.blockClicks = true;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -168,7 +172,7 @@ public class TeleportPadSystem implements System {
     private void teleportTo(Vector2 where) {
         Entity player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class, Position.class).get(0);
         player.getComponent(Position.class).position.set(where);
-        // TODO
         player.getComponent(ActivePlayerCharacter.class).teleportCooldown.reset(5f);
+        Globals.blockClicks = false;
     }
 }

@@ -14,6 +14,8 @@ import marlin.auber.components.Health;
 import marlin.auber.components.Position;
 import marlin.auber.models.World;
 
+import java.util.List;
+
 public class HealthSystem implements System, Resetable {
     private final SpriteBatch guiBatch = new SpriteBatch();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -78,10 +80,11 @@ public class HealthSystem implements System, Resetable {
 
     public void reset() {
         this.gameOver = false;
-        Entity player = Entity
-                .getAllEntitiesWithComponents(Health.class)
-                .get(0);
-        player.getComponent(Health.class).resetHealth();
+        List<Entity> playerMaybe = Entity
+                .getAllEntitiesWithComponents(Health.class);
+        if (playerMaybe.size() > 0) {
+            playerMaybe.get(0).getComponent(Health.class).resetHealth();
+        }
     }
 
     // if there is a bug, this may be causing it

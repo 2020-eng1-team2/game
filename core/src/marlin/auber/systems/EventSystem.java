@@ -225,11 +225,15 @@ public class EventSystem implements System, Resetable {
 
     @Override
     public void reset() {
-        ActivePlayerCharacter player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(ActivePlayerCharacter.class);
-        player.meltdownTime.reset(0f);
-        player.eventCooldown.reset(eventCooldownTimer);
-        player.abilityCooldown.reset(abilityCooldownTimer);
-        player.abilityDuration.reset(abilityDurationTimer);
+        List<Entity> playerMaybe = Entity
+                .getAllEntitiesWithComponents(Health.class);
+        if (playerMaybe.size() > 0) {
+            ActivePlayerCharacter player = playerMaybe.get(0).getComponent(ActivePlayerCharacter.class);
+            player.meltdownTime.reset(0f);
+            player.eventCooldown.reset(eventCooldownTimer);
+            player.abilityCooldown.reset(abilityCooldownTimer);
+            player.abilityDuration.reset(abilityDurationTimer);
+        }
         keypadFixed = true;
         infilArrested = true;
     }

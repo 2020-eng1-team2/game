@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import marlin.auber.common.Assets;
 import marlin.auber.common.Entity;
+import marlin.auber.common.Globals;
 import marlin.auber.common.System;
 import marlin.auber.components.*;
 import marlin.auber.models.World;
@@ -77,7 +78,7 @@ public class ArrestSystem implements System {
         // Add delta to auber position
         Vector2 clickPos = new Vector2(auber).add(gsDelta);
 
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && arrestBeam.beamsLeft() != 0) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !Globals.blockClicks && arrestBeam.beamsLeft() != 0) {
             arrestBeam.shootBeam();
             Gdx.app.log("beams left", Integer.toString(arrestBeam.beamsLeft()));
             if (new Vector2().dst2(gsDelta) <= Math.pow(ARREST_BEAM_RANGE, 2)) {
@@ -123,7 +124,7 @@ public class ArrestSystem implements System {
             }
             Vector2 entPosition = arrestingEntity.getComponent(Position.class).position;
             Vector2 entSize = arrestingEntity.getComponent(AABB.class).size;
-            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT) && !Globals.blockClicks) {
                 if (clickPos.x <= entPosition.x + entSize.x && clickPos.x >= entPosition.x) {
                     // x is in bounds of NPC
                     if (clickPos.y <= entPosition.y + entSize.y && clickPos.y >= entPosition.y) {

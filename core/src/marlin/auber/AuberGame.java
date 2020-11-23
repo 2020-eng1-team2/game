@@ -158,6 +158,7 @@ public class AuberGame extends ApplicationAdapter {
 			// If escape key is pressed, change game_state to State.PAUSED
 			if (pauseMenuSystem.checkIsPaused()) {
 				game_state = State.PAUSED;
+				Globals.blockClicks = true;
 				if (pauseMenuSystem.checkMenu()) {
 					game_state = State.MENU;
 					this.oneTimeMenu = true;
@@ -165,9 +166,11 @@ public class AuberGame extends ApplicationAdapter {
 			} else {
 				game_state = State.RUNNING;
 				if (healthSystem.isGameOver()) {
+					Globals.blockClicks = true;
 					game_state = State.LOSE;
 				}
 				else if (scoreSystem.gameWin()) {
+					Globals.blockClicks = true;
 					game_state = State.WIN;
 				}
 			}
@@ -177,12 +180,19 @@ public class AuberGame extends ApplicationAdapter {
 			if (mainMenuSystem.checkStartGame()) {
 				this.oneTimeGame = true;
 				game_state = State.RUNNING;
+				Globals.blockClicks = false;
+				for (System sys : this.systems) {
+					if (sys instanceof Resetable) {
+						((Resetable) sys).reset();
+					}
+				}
 			}
 		}
 		else if (game_state == State.WIN) {
 			// In win screen
 			if (winGameSystem.toMainMenu()) {
 				this.oneTimeMenu = true;
+				Globals.blockClicks = true;
 				game_state = State.MENU;
 			}
 		}
@@ -190,11 +200,7 @@ public class AuberGame extends ApplicationAdapter {
 			// In lose screen
 			if (loseGameSystem.toMainMenu()) {
 				this.oneTimeMenu = true;
-				for (System sys : this.systems) {
-					if (sys instanceof Resetable) {
-						((Resetable) sys).reset();
-					}
-				}
+				Globals.blockClicks = true;
 				game_state = State.MENU;
 			}
 		}
