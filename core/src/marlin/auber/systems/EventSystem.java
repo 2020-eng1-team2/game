@@ -34,9 +34,12 @@ public class EventSystem implements System {
     private boolean keypadLastFrame;
     private boolean infiltratorLastFrame;
     private boolean startGame = true;
+    private boolean toggleAbility = false;
 
     private final float meltdownTimer = 60f;
     private final float eventCooldownTimer = 15f;
+    private final float abilityCooldownTimer = 10f;
+    private final float abilityDurationTimer = 3f;
 
     private final SpriteBatch guiBatch = new SpriteBatch();
     private final GlyphLayout layout = new GlyphLayout();
@@ -54,6 +57,26 @@ public class EventSystem implements System {
         if (startGame) {
             startGame = false;
             player.eventCooldown.reset(eventCooldownTimer);
+        }
+        if (player.abilityDuration.isOver() && !player.abilityCooldown.isOver()) {
+            player.abilityCooldown.reset(abilityCooldownTimer);
+            toggleAbility = true;
+        }
+        else if (player.abilityCooldown.isOver()) {
+            player.abilityDuration.reset(abilityDurationTimer);
+            toggleAbility = true;
+        }
+        if (toggleAbility) {
+            toggleAbility = false;
+            //for (Entity ent : Entity.getAllEntitiesWithComponents(SpeedAbility.class)) {
+            //    ent.getComponent(SpeedAbility.class).toggleAbility();
+            //}
+            for (Entity ent : Entity.getAllEntitiesWithComponents(InvisAbility.class)) {
+                ent.getComponent(InvisAbility.class).toggleAbility();
+            }
+            //for (Entity ent : Entity.getAllEntitiesWithComponents(StunAbility.class)) {
+            //    ent.getComponent(StunAbility.class).toggleAbility();
+            //}
         }
         // Update event status
         updateArrests();
@@ -88,7 +111,7 @@ public class EventSystem implements System {
             );
         }
         else if (!this.infilArrested) {
-            Gdx.app.log("infil", "infil needs to be arrested");
+            // May use this to indicate there is a killer on the loose
         }
         if (this.startEvent && !eventPart1) {
             this.startEvent = false;
@@ -171,9 +194,9 @@ public class EventSystem implements System {
                         AnimSheet.create(Gdx.files.internal("graphics/infiltratorWalkLeft.json")),
                         AnimSheet.create(Gdx.files.internal("graphics/infiltratorWalkRight.json"))
                 ),
-                new Infiltrator()
-                // Fix abilities
-                //new SpeedAbility()
+                new Infiltrator(),
+                // TODO: Fix abilities
+                new InvisAbility()
         );
     }
 }

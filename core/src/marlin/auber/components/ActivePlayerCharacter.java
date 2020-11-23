@@ -43,4 +43,14 @@ public class ActivePlayerCharacter extends Component {
      * A Timer for the time inbetween Infiltrator attacks.
      */
     public Timer eventCooldown = Timer.createTimer(0f);
+
+    /**
+     * A Timer for the time inbetween Infiltrator ability uses.
+     */
+    public Timer abilityCooldown = Timer.createTimer(0f);
+
+    /**
+     * A Timer for the duration of Infiltrator ability uses.
+     */
+    public Timer abilityDuration = Timer.createTimer(0f);
 }
