@@ -18,7 +18,6 @@ public class CellNPCAISystem implements System {
             delta.set(0, 0);
             CellNPCAI ai = ent.getComponent(CellNPCAI.class);
             Position currentPosition = ent.getComponent(Position.class);
-            Gdx.app.log("CellNPCAISystem", "ID " + ent.getId() + " state " + ai.state.toString());
             switch (ai.state) {
                 case STANDING_AROUND:
                     if (ai.standingAroundTimer.getRemaining() == 0f) {
