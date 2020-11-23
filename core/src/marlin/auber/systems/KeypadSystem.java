@@ -45,7 +45,7 @@ public class KeypadSystem implements System {
                     shapeRenderer.setProjectionMatrix(World.getWorld().viewport.getCamera().combined);
                     shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
                     shapeRenderer.setColor(1, 0, 0, 1);
-                    shapeRenderer.rect(entPosition.x, entPosition.y + size.y * 1.05f, size.x - (size.x * (player.getComponent(ActivePlayerCharacter.class).keypadTime.getRemaining() / fixTime)), size.y / 10f);
+                    shapeRenderer.rect(entPosition.x - 0.5f, entPosition.y + size.y * 1.05f, size.x - (size.x * (player.getComponent(ActivePlayerCharacter.class).keypadTime.getRemaining() / fixTime)), size.y / 10f);
                     shapeRenderer.end();
                     if (!guiBatch.isDrawing()) {
                         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -83,7 +83,7 @@ public class KeypadSystem implements System {
                 shapeRenderer.setProjectionMatrix(World.getWorld().viewport.getCamera().combined);
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
                 shapeRenderer.setColor(0, 1, 0, 1);
-                shapeRenderer.rect(entPosition.x, entPosition.y + size.y * 1.05f, size.x - (size.x * (player.getComponent(ActivePlayerCharacter.class).keypadTime.getRemaining() / fixTime)), size.y / 10f);
+                shapeRenderer.rect(entPosition.x - 0.5f, entPosition.y + size.y * 1.05f, size.x - (size.x * (player.getComponent(ActivePlayerCharacter.class).keypadTime.getRemaining() / fixTime)), size.y / 10f);
                 shapeRenderer.end();
                 // End Beaming bar
                 if (!guiBatch.isDrawing()) {

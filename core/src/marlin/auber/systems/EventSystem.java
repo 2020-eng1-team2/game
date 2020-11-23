@@ -13,8 +13,9 @@ import marlin.auber.models.World;
 import java.util.List;
 import java.util.Random;
 
-// TODO: Fix bug where game ends when meltdown timer gets to zero while player is looking for infiltrator
+// TODO: Think i fixed 60 second bug, needs testing
 // TODO: Fix infiltrator despawning on keypad fix
+// TODO: Reset aubers movement speed if stun infiltrator is arrested while stunned
 public class EventSystem implements System, Resetable {
 
     /**
@@ -102,7 +103,7 @@ public class EventSystem implements System, Resetable {
             Gdx.app.log("EventSystem", "Starting event");
             this.startEvent = true;
         }
-        else if (player.meltdownTime.isOver() && !noEvent()) {
+        else if (player.meltdownTime.isOver() && !keypadLastFrame) {
             // Player lost, ship destroyed. End game
             // Reduces Auber's health by max health to end game
             Gdx.app.log("EventSystem", "Ship melted down, boo!");
@@ -166,6 +167,9 @@ public class EventSystem implements System, Resetable {
         }
     }
 
+    /**
+     * Checks if there exists an Infiltrator on the run
+     */
     private void updateArrests() {
         if (Entity.getAllEntitiesWithComponents(Infiltrator.class).size() <= 0) {
             // No Infiltrator on the run
@@ -173,6 +177,9 @@ public class EventSystem implements System, Resetable {
         }
     }
 
+    /**
+     * Checks if there exists a broken keypad
+     */
     private void updateKeypad() {
         for (Entity ent : Entity.getAllEntitiesWithComponents(KeypadTarget.class)) {
             if (ent.getComponent(KeypadTarget.class).isBroken) {
@@ -183,6 +190,9 @@ public class EventSystem implements System, Resetable {
         this.keypadFixed = true;
     }
 
+    /**
+     * Begins a broken keypad event
+     */
     private void startKeypadEvent() {
         this.keypadFixed = false;
         ActivePlayerCharacter player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(ActivePlayerCharacter.class);
@@ -193,6 +203,9 @@ public class EventSystem implements System, Resetable {
         Entity.getAllEntitiesWithComponents(KeypadTarget.class).get(rng).getComponent(KeypadTarget.class).breakPad();
     }
 
+    /**
+     * Starts an Infiltrator event
+     */
     private void startInfiltratorEvent() {
         this.infilArrested = false;
         // Spawn in infiltrator away from Auber
@@ -205,8 +218,8 @@ public class EventSystem implements System, Resetable {
         }
         // Generate random ability
         Random random = new Random();
-        int rng = random.nextInt(3);
-        Entity.create(
+        int rng = random.nextInt(4);
+         Entity infil = Entity.create(
                 "Infiltrator",
                 new Position(max),
                 new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
@@ -218,10 +231,21 @@ public class EventSystem implements System, Resetable {
                         AnimSheet.create(Gdx.files.internal("graphics/infiltratorWalkLeft.json")),
                         AnimSheet.create(Gdx.files.internal("graphics/infiltratorWalkRight.json"))
                 ),
-                new Infiltrator(),
-                // TODO: Fix abilities
-                new SpeedAbility()
+                new Infiltrator()
         );
+         if (rng == 0) {
+             // Attach Speed Ability
+             infil.attachComponent(new SpeedAbility());
+         }
+         else if (rng == 1) {
+             // Attach Invisibility ability
+             infil.attachComponent(new InvisAbility());
+         }
+         else {
+             // Stun ability twice as likely to appear than the other two
+             // Attach stun ability
+             infil.attachComponent(new StunAbility());
+         }
     }
 
     @Override
