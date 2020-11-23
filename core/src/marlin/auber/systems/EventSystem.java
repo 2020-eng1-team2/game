@@ -34,6 +34,7 @@ public class EventSystem implements System {
 
     private boolean eventPart1 = false;
     private boolean keypadLastFrame;
+    private boolean startGame = true;
 
     private final float meltdownTimer = 60f;
 
@@ -49,6 +50,10 @@ public class EventSystem implements System {
         }
         keypadLastFrame = keypadFixed;
         ActivePlayerCharacter player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(ActivePlayerCharacter.class);
+        if (startGame) {
+            startGame = false;
+            player.eventCooldown.reset(15f);
+        }
         // Update event status
         updateArrests();
         updateKeypad();
@@ -57,7 +62,7 @@ public class EventSystem implements System {
             eventPart1 = true;
         }
         // Check is event is happening
-        if (noEvent()) {
+        if (noEvent() && player.eventCooldown.isOver()) {
             // No event is happening, start event
             this.startEvent = true;
         }
@@ -71,7 +76,7 @@ public class EventSystem implements System {
             float height = layout.height;
             Assets.fonts.cnr.draw(
                     guiBatch,
-                    String.format("Time to meltdown: .1%f", player.meltdownTime.getRemaining()),
+                    String.format("Time to meltdown: %.1f", player.meltdownTime.getRemaining()),
                     (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f), (Gdx.graphics.getHeight() - (height * 1.5f))
             );
         }
