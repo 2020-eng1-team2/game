@@ -67,6 +67,7 @@ public class HealthSystem implements System {
         if (guiBatch.isDrawing()) {
             guiBatch.end();
         }
+        // TODO: Remove debug operations before handing it in
         // For debug uses
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             player.getComponent(Health.class).decreaseHealth(5f);

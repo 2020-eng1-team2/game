@@ -10,7 +10,7 @@ import java.util.List;
  * NPC artificial intelligence.
  */
 public class NPCAI extends Component {
-    public final float movementSpeed;
+    public float movementSpeed;
     public NPCAI(float movementSpeed) {
         this.movementSpeed = movementSpeed;
     }
