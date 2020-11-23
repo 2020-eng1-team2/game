@@ -19,6 +19,8 @@ public class HealthSystem implements System {
     private final GlyphLayout layout = new GlyphLayout();
     private float healCooldown = 5f;
 
+    private boolean gameOver = false;
+
     public void tick() {
         if (!guiBatch.isDrawing()) {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -28,9 +30,8 @@ public class HealthSystem implements System {
                 .getAllEntitiesWithComponents(Health.class)
                 .get(0);
         if (player.getComponent(Health.class).gameOver()){
-            // TODO: Game Over (return to menu?)
+            gameOver = true;
         }
-        // TODO: Heal distance
         if (World.getWorld().map.healPoint.dst2(player.getComponent(Position.class).position) <= Math.pow(1, 2)) {
             if (!player.getComponent(ActivePlayerCharacter.class).healCooldown.isOver()) {
                 layout.setText(Assets.fonts.cnr, String.format("Healing recharged in %.1f", player.getComponent(ActivePlayerCharacter.class).healCooldown.getRemaining()));
@@ -72,5 +73,10 @@ public class HealthSystem implements System {
         if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             player.getComponent(Health.class).decreaseHealth(5f);
         }
+    }
+
+    // if there is a bug, this may be causing it
+    public boolean isGameOver() {
+        return this.gameOver;
     }
 }
