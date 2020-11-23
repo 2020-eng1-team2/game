@@ -22,7 +22,7 @@ public class KeypadSystem implements System {
     private Entity kpEntity;
     private final float fixTime = 3f;
     public void tick() {
-        // TODO: Not working full, will need tidy up once game logic is implemented
+        // TODO: Fix red bar bug & tidy up?
         /**
          * Player is not able to interact with keypad unless it is broken {@link KeypadTarget}.
          */
@@ -70,6 +70,10 @@ public class KeypadSystem implements System {
             }
         }
         else if (beginFixing) {
+            if (!Gdx.input.isKeyPressed(Input.Keys.F)) {
+                // Reset Keypad
+                beginFixing = false;
+            }
                 if (guiBatch.isDrawing()) {
                     guiBatch.end();
                 }
