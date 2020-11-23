@@ -38,6 +38,7 @@ public class AuberGame extends ApplicationAdapter {
 	
 	@Override
 	public void create () {
+		// TODO: Reduce loading times (Don't create entities here, create systems in resetGame())
 		World.init(
 				Map.loadMap(Gdx.files.internal("maps/map1/map1.json"))
 		);
@@ -64,12 +65,14 @@ public class AuberGame extends ApplicationAdapter {
 			Entity.create(
 					"boris" + i,
 					new Position(World.getWorld().map.auberSpawn),
-					new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+					new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
 					new Walking(),
 					new NPCAI(3.0f),
 					new Renderer(8),
-					new StaticRenderer(
-							new Texture(Gdx.files.internal("testChar2.png"))
+					new WalkingRenderer(
+							new Texture(Gdx.files.internal("graphics/npc1Static.png")),
+							AnimSheet.create(Gdx.files.internal("graphics/npc1WalkLeft.json")),
+							AnimSheet.create(Gdx.files.internal("graphics/npc1WalkRight.json"))
 					)
 			);
 		}
@@ -230,12 +233,14 @@ public class AuberGame extends ApplicationAdapter {
 			Entity.create(
 					"boris" + i,
 					new Position(World.getWorld().map.auberSpawn),
-					new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+					new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
 					new Walking(),
 					new NPCAI(3.0f),
 					new Renderer(8),
-					new StaticRenderer(
-							new Texture(Gdx.files.internal("testChar2.png"))
+					new WalkingRenderer(
+							new Texture(Gdx.files.internal("graphics/npc1Static.png")),
+							AnimSheet.create(Gdx.files.internal("graphics/npc1WalkLeft.json")),
+							AnimSheet.create(Gdx.files.internal("graphics/npc1WalkRight.json"))
 					)
 			);
 		}
@@ -274,12 +279,14 @@ public class AuberGame extends ApplicationAdapter {
 			Entity.create(
 					"boris" + i,
 					new Position(World.getWorld().map.auberSpawn),
-					new AABB(1.8f, 1.8f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
+					new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
 					new Walking(),
 					new NPCAI(3.0f),
 					new Renderer(8),
-					new StaticRenderer(
-							new Texture(Gdx.files.internal("testChar2.png"))
+					new WalkingRenderer(
+							new Texture(Gdx.files.internal("graphics/npc1Static.png")),
+							AnimSheet.create(Gdx.files.internal("graphics/npc1WalkLeft.json")),
+							AnimSheet.create(Gdx.files.internal("graphics/npc1WalkRight.json"))
 					)
 			);
 		}

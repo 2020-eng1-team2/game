@@ -55,11 +55,13 @@ public class EventSystem implements System {
         }
         if (this.startEvent) {
             this.startEvent = false;
-            this.eventPart1 = true;
             startKeypadEvent();
             // When keypad event ends, start infiltrator event
         }
-        if (eventPart1 == true) {
+        else if (keypadFixed) {
+            this.eventPart1 = true;
+        }
+        if (eventPart1) {
             this.eventPart1 = false;
             startInfiltratorEvent();
         }
