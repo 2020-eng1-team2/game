@@ -15,6 +15,7 @@ public class StunAbility extends Component {
         else {
             // Set Auber's movement speed to 0f
             auber.getComponent(KeyboardMovement.class).movementSpeed = 0f;
+            auber.getComponent(Health.class).decreaseHealth(10f);
         }
     }
 }

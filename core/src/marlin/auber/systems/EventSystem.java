@@ -118,6 +118,14 @@ public class EventSystem implements System {
         }
         else if (!this.infilArrested) {
             // May use this to indicate there is a killer on the loose
+            layout.setText(Assets.fonts.cnr, "Find and Arrest the Infiltrator");
+            float width = layout.width;
+            float height = layout.height;
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    "Find and Arrest the Infiltrator",
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f), (Gdx.graphics.getHeight() - (height * 1.5f))
+            );
         }
         if (this.startEvent && !eventPart1) {
             this.startEvent = false;
@@ -202,7 +210,7 @@ public class EventSystem implements System {
                 ),
                 new Infiltrator(),
                 // TODO: Fix abilities
-                new InvisAbility()
+                new SpeedAbility()
         );
     }
 }
