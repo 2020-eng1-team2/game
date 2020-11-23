@@ -53,12 +53,10 @@ public class KeypadSystem implements System {
                     }
                     if (kp.getComponent(Position.class).position.dst2(player.getComponent(Position.class).position) <= Math.pow(kp.getComponent(KeypadTarget.class).activationRange, 2)) {
                         if (Gdx.input.isKeyPressed(Input.Keys.F)) {
-                            if (fixingPad) {
-                                kpEntity = kp;
-                                beginFixing = true;
-                                player.getComponent(ActivePlayerCharacter.class).keypadTime.reset(fixTime);
-                                break;
-                            }
+                            kpEntity = kp;
+                            beginFixing = true;
+                            player.getComponent(ActivePlayerCharacter.class).keypadTime.reset(fixTime);
+                            break;
                         } else {
                             fixingPad = false;
                             Assets.fonts.cnr.draw(
@@ -90,8 +88,17 @@ public class KeypadSystem implements System {
                 }
                 if (player.getComponent(ActivePlayerCharacter.class).keypadTime.isOver()) {
                     // Keypad Fixed
+                    kpEntity.getComponent(KeypadTarget.class).fixPad();
+                    Gdx.app.log("kp", "kp fixed!!!");
                     beginFixing = false;
                     fixingPad = false;
+                }
+                else {
+                    Assets.fonts.cnr.draw(
+                            guiBatch,
+                            "Fixing...",
+                            50, 50
+                    );
                 }
             }
             if (guiBatch.isDrawing()) {
