@@ -2,7 +2,10 @@ package marlin.auber.systems;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import marlin.auber.common.Assets;
 import marlin.auber.common.Component;
 import marlin.auber.common.Entity;
 import marlin.auber.common.System;
@@ -15,14 +18,14 @@ import java.util.Random;
 public class EventSystem implements System {
 
     /**
-     * True if the infiltrator has been arrested
+     * True if the infiltrator has been arrested, true by default
      */
-    private boolean infilArrested = false;
+    private boolean infilArrested = true;
 
     /**
-     * True if the keypad is fixed
+     * True if the keypad is fixed, true by default
      */
-    private boolean keypadFixed = false;
+    private boolean keypadFixed = true;
 
     /**
      * Runs code to being an event once
@@ -30,20 +33,29 @@ public class EventSystem implements System {
     private boolean startEvent = false;
 
     private boolean eventPart1 = false;
+    private boolean keypadLastFrame;
 
-    private List<Component> abilities;
+    private final float meltdownTimer = 60f;
 
-    public EventSystem() {
-        abilities.add(new SpeedAbility());
-        abilities.add(new InvisAbility());
-        abilities.add(new StunAbility());
-    }
+    private final SpriteBatch guiBatch = new SpriteBatch();
+    private final GlyphLayout layout = new GlyphLayout();
+
+    ActivePlayerCharacter player;
 
     public void tick() {
+        if (!guiBatch.isDrawing()) {
+            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            guiBatch.begin();
+        }
+        keypadLastFrame = keypadFixed;
         ActivePlayerCharacter player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(ActivePlayerCharacter.class);
         // Update event status
         updateArrests();
         updateKeypad();
+        if (!keypadLastFrame && keypadFixed) {
+            // Keypad just fixed
+            eventPart1 = true;
+        }
         // Check is event is happening
         if (noEvent()) {
             // No event is happening, start event
@@ -53,17 +65,32 @@ public class EventSystem implements System {
             // Player lost, ship destroyed. End game
             // TODO: Game over
         }
+        else if (!this.keypadFixed) {
+            Gdx.app.log("kp", "kp needs fixing");
+            layout.setText(Assets.fonts.cnr, String.format("Time to meltdown: %.1f", player.meltdownTime.getRemaining()));
+            float width = layout.width;
+            float height = layout.height;
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    String.format("Time to meltdown: .1%f", player.meltdownTime.getRemaining()),
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f), (Gdx.graphics.getHeight() - (height * 1.5f))
+            );
+        }
+        else if (!this.infilArrested) {
+            Gdx.app.log("infil", "infil needs to be arrested");
+        }
         if (this.startEvent) {
             this.startEvent = false;
             startKeypadEvent();
-            // When keypad event ends, start infiltrator event
+            Gdx.app.log("kp", "kp started");
+            // When keypad event ends, start infiltrator event by making eventPart1 true
         }
-        else if (keypadFixed) {
-            this.eventPart1 = true;
-        }
-        if (eventPart1) {
+        if (eventPart1 && keypadFixed) {
             this.eventPart1 = false;
             startInfiltratorEvent();
+        }
+        if (guiBatch.isDrawing()) {
+            guiBatch.end();
         }
     }
 
@@ -90,6 +117,7 @@ public class EventSystem implements System {
     private void updateKeypad() {
         for (Entity ent : Entity.getAllEntitiesWithComponents(KeypadTarget.class)) {
             if (ent.getComponent(KeypadTarget.class).isBroken) {
+                this.keypadFixed = false;
                 return;
             }
         }
@@ -98,6 +126,9 @@ public class EventSystem implements System {
     }
 
     private void startKeypadEvent() {
+        this.keypadFixed = false;
+        ActivePlayerCharacter player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(ActivePlayerCharacter.class);
+        player.meltdownTime.reset(this.meltdownTimer);
         // RNG pick a keypad and break it
         Random random = new Random();
         int rng = random.nextInt(World.getWorld().map.keypads.size());
@@ -105,6 +136,7 @@ public class EventSystem implements System {
     }
 
     private void startInfiltratorEvent() {
+        this.infilArrested = false;
         // Spawn in infiltrator away from Auber
         Vector2 max = Vector2.Zero;
         Vector2 auber = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(Position.class).position;
@@ -127,7 +159,7 @@ public class EventSystem implements System {
                         new Texture(Gdx.files.internal("testChar2.png"))
                 ),
                 new Infiltrator(),
-                abilities.get(rng)
+                new SpeedAbility()
         );
     }
 }

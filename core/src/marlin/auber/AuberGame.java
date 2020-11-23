@@ -82,7 +82,7 @@ public class AuberGame extends ApplicationAdapter {
 			Entity.create(
 					"pad" + i++,
 					new Position(pad),
-					new TeleportTarget(3.0f)
+					new TeleportTarget(1.0f)
 			);
 		}
 
@@ -110,7 +110,8 @@ public class AuberGame extends ApplicationAdapter {
 				new NPCAISystem(),
 				new CellNPCAISystem(),
 				new TeleportPadSystem(),
-				new KeypadSystem()
+				new KeypadSystem(),
+				new EventSystem()
 		);
 
 		this.pauseSystems = Arrays.asList(

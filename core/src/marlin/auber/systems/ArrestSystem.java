@@ -30,6 +30,8 @@ public class ArrestSystem implements System {
     private float sHeight;
     private float sWidth;
 
+    // TODO: Fix firing beam in teleport screen
+
     /**
      * Used to set the reload timer once when wither reload button is pressed, or ammo goes down to zero.
      */
@@ -48,7 +50,6 @@ public class ArrestSystem implements System {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             guiBatch.begin();
         }
-        // TODO: Add reload button
         ActivePlayerCharacter player = Entity
                 .getAllEntitiesWithComponents(ActivePlayerCharacter.class)
                 .get(0)
