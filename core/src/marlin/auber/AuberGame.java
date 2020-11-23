@@ -144,7 +144,7 @@ public class AuberGame extends ApplicationAdapter {
 				new KeyboardMovementSystem(),
 				new ViewportTargetSystem(),
 				renderSystem,
-				new NavMeshDebuggingSystem(),
+				//new NavMeshDebuggingSystem(),
 				mainMenuSystem,
 				new NPCAISystem()
 		);
@@ -266,7 +266,6 @@ public class AuberGame extends ApplicationAdapter {
 	}
 
 	public void createDemo() {
-		// TODO: Fix the lack of walking
 		// Find Auber and delete it
 		Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).destroy();
 

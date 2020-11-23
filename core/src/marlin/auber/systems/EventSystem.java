@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Random;
 
 // TODO: Fix bug where game ends when meltdown timer gets to zero while player is looking for infiltrator
+// TODO: Fix infiltrator despawning on keypad fix
 public class EventSystem implements System, Resetable {
 
     /**
