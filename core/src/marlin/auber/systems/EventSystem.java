@@ -66,7 +66,6 @@ public class EventSystem implements System {
             // TODO: Game over
         }
         else if (!this.keypadFixed) {
-            Gdx.app.log("kp", "kp needs fixing");
             layout.setText(Assets.fonts.cnr, String.format("Time to meltdown: %.1f", player.meltdownTime.getRemaining()));
             float width = layout.width;
             float height = layout.height;
