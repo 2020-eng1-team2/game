@@ -23,7 +23,5 @@ public class CellNPCAI extends Component {
     public State state = State.STANDING_AROUND;
     public Timer standingAroundTimer = Timer.createTimer(1f);
 
-    public Vector2 target;
-    public List<Vector2> path;
-    public Vector2 next;
+    public Vector2 target = new Vector2(0, 0);
 }

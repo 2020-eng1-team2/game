@@ -3,6 +3,7 @@ package marlin.auber.systems;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import marlin.auber.common.Entity;
+import marlin.auber.common.Helpers;
 import marlin.auber.common.System;
 import marlin.auber.components.CellNPCAI;
 import marlin.auber.components.Position;
@@ -16,42 +17,34 @@ public class CellNPCAISystem implements System {
         for (Entity ent : Entity.getAllEntitiesWithComponents(CellNPCAI.class)) {
             delta.set(0, 0);
             CellNPCAI ai = ent.getComponent(CellNPCAI.class);
-            Position pos = ent.getComponent(Position.class);
+            Position currentPosition = ent.getComponent(Position.class);
+            Gdx.app.log("CellNPCAISystem", "ID " + ent.getId() + " state " + ai.state.toString());
             switch (ai.state) {
                 case STANDING_AROUND:
                     if (ai.standingAroundTimer.getRemaining() == 0f) {
                         // move to walking
                         Vector2 newTarget = new Vector2(0, 0);
                         do {
-                            int x = (int) Math.round(Math.random() * World.getWorld().map.width);
-                            int y = (int) Math.round(Math.random() * World.getWorld().map.height);
-                            newTarget.set(x, y);
-                        } while (!World.getWorld().inBounds(newTarget));
-                        ai.path = World.getWorld().findPathTo(pos.position, newTarget, World.getWorld().map.cellNavMesh);
-                        ai.path.add(newTarget);
-                        ai.next = ai.path.remove(0);
+                            newTarget.set(Helpers.randomCollectionElement(World.getWorld().map.cellNavMesh.values()).position);
+                        } while (newTarget.epsilonEquals(currentPosition.position));
+                        ai.target.set(newTarget);
                         ai.state = CellNPCAI.State.WALKING;
                     }
                     break;
                 case WALKING:
-                    if (ai.path.isEmpty()) {
+                    if (ai.target.epsilonEquals(currentPosition.position)) {
                         // reached the goal, stand around
                         ai.state = CellNPCAI.State.STANDING_AROUND;
                         ai.standingAroundTimer.reset(5f);
                     } else {
-                        if (ai.next.epsilonEquals(pos.position)) {
-                            ai.next = ai.path.remove(0);
-                        }
-
                         // Move towards the next point on the path
-                        delta.set(ai.next.x, ai.next.y);
-                        delta.sub(pos.position);
+                        delta.set(ai.target.x, ai.target.y);
+                        delta.sub(currentPosition.position);
                         delta.clamp(0, ai.movementSpeed * Gdx.graphics.getDeltaTime());
-                        pos.position.add(delta);
+                        currentPosition.position.add(delta);
                     }
                     break;
             }
         }
     }
 }
-

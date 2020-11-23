@@ -1,25 +1,20 @@
 package marlin.auber.common;
 
-import com.badlogic.gdx.Gdx;
+import java.util.Collection;
 
 public class Helpers {
 
     /**
-     * Horizontal percentage of the screen to X-axis pixels
-     * @param horizontalPercentage
-     * @return
+     * Pick a random element from a collection.
+     *
+     * From https://stackoverflow.com/a/21092353
+     * @param coll a collection
+     * @param <T> the type of elements
+     * @return a randomly picked element
      */
-    public static float hptw(float horizontalPercentage) {
-        return Gdx.graphics.getWidth() * horizontalPercentage;
+    public static <T> T randomCollectionElement(Collection<T> coll) {
+        int num = (int) (Math.random() * coll.size());
+        for(T t: coll) if (--num < 0) return t;
+        throw new AssertionError();
     }
-
-    /**
-     * Vertical percentage to height
-     * @param verticalPercentage
-     * @return
-     */
-    public static float vpth(float verticalPercentage) {
-        return Gdx.graphics.getHeight() * verticalPercentage;
-    }
-
 }

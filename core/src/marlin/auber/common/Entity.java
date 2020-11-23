@@ -1,5 +1,7 @@
 package marlin.auber.common;
 
+import com.badlogic.gdx.Gdx;
+
 import java.util.*;
 
 /**
@@ -61,6 +63,7 @@ public class Entity {
     public void removeComponent(Class<? extends Component> type) {
         Component old = this.components.remove(type);
         if (old != null) {
+            Gdx.app.log("Entity", "destroying component of type " + type.getSimpleName());
             old.destroy();
         }
     }
