@@ -35,6 +35,7 @@ public class EventSystem implements System {
     private boolean infiltratorLastFrame;
     private boolean startGame = true;
     private boolean toggleAbility = false;
+    private boolean abilityOn = false;
 
     private final float meltdownTimer = 60f;
     private final float eventCooldownTimer = 15f;
@@ -57,26 +58,31 @@ public class EventSystem implements System {
         if (startGame) {
             startGame = false;
             player.eventCooldown.reset(eventCooldownTimer);
-        }
-        if (player.abilityDuration.isOver() && !player.abilityCooldown.isOver()) {
-            player.abilityCooldown.reset(abilityCooldownTimer);
-            toggleAbility = true;
-        }
-        else if (player.abilityCooldown.isOver()) {
             player.abilityDuration.reset(abilityDurationTimer);
+        }
+        if (player.abilityDuration.isOver() && abilityOn) {
+            abilityOn = false;
             toggleAbility = true;
+            player.abilityCooldown.reset(abilityCooldownTimer);
+        }
+        else if (player.abilityCooldown.isOver() && !abilityOn) {
+            abilityOn = true;
+            toggleAbility = true;
+            player.abilityDuration.reset(abilityDurationTimer);
         }
         if (toggleAbility) {
             toggleAbility = false;
-            //for (Entity ent : Entity.getAllEntitiesWithComponents(SpeedAbility.class)) {
-            //    ent.getComponent(SpeedAbility.class).toggleAbility();
-            //}
-            for (Entity ent : Entity.getAllEntitiesWithComponents(InvisAbility.class)) {
-                ent.getComponent(InvisAbility.class).toggleAbility();
+            for (Entity ent : Entity.getAllEntitiesWithComponents(Infiltrator.class)) {
+                if (ent.hasComponent(InvisAbility.class)) {
+                    ent.getComponent(InvisAbility.class).toggleAbility();
+                }
+                else if (ent.hasComponent(SpeedAbility.class)) {
+                    ent.getComponent(SpeedAbility.class).toggleAbility();
+                }
+                else if (ent.hasComponent(StunAbility.class)) {
+                    ent.getComponent(StunAbility.class).toggleAbility();
+                }
             }
-            //for (Entity ent : Entity.getAllEntitiesWithComponents(StunAbility.class)) {
-            //    ent.getComponent(StunAbility.class).toggleAbility();
-            //}
         }
         // Update event status
         updateArrests();
