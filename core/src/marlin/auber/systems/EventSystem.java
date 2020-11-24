@@ -13,7 +13,6 @@ import marlin.auber.models.World;
 import java.util.List;
 import java.util.Random;
 
-// TODO: Think i fixed 60 second bug, needs testing
 // TODO: Fix infiltrator despawning on keypad fix
 public class EventSystem implements System, Resetable {
 

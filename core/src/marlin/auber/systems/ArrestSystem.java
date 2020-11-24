@@ -204,6 +204,11 @@ public class ArrestSystem implements System {
                 // Reset Auber movement speed if ent gets arrested while stun ability is active
                 Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(KeyboardMovement.class).movementSpeed = 3.0f;
             }
+            else if (!ent.hasComponent(Renderer.class)) {
+                // Reset ent renderer if it gets arrested while ability is active
+                ent.attachComponent(new Renderer(8));
+            }
+            // No need to reset movement speed as that is now handled by CellNPCAI rather than NPCAI
             ent.attachComponent(new CellNPCAI(3.0f));
         }
         else {
