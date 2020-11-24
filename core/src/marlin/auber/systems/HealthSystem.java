@@ -39,6 +39,13 @@ public class HealthSystem implements System, Resetable {
             if (!player.getComponent(ActivePlayerCharacter.class).healCooldown.isOver()) {
                 layout.setText(Assets.fonts.cnr, String.format("Healing recharged in %.1f", player.getComponent(ActivePlayerCharacter.class).healCooldown.getRemaining()));
                 float height = layout.height;
+                Assets.fonts.cnr.setColor(0, 0, 0, 1);
+                Assets.fonts.cnr.draw(
+                        guiBatch,
+                        String.format("Healing recharged in %.1f", player.getComponent(ActivePlayerCharacter.class).healCooldown.getRemaining()),
+                        50 - 2, Gdx.graphics.getHeight() - (height * 1.5f) - 2
+                );
+                Assets.fonts.cnr.setColor(1, 1, 1, 1);
                 Assets.fonts.cnr.draw(
                         guiBatch,
                         String.format("Healing recharged in %.1f", player.getComponent(ActivePlayerCharacter.class).healCooldown.getRemaining()),
@@ -48,6 +55,13 @@ public class HealthSystem implements System, Resetable {
             else {
                 layout.setText(Assets.fonts.cnr, "Press F to heal");
                 float height = layout.height;
+                Assets.fonts.cnr.setColor(0, 0, 0, 1);
+                Assets.fonts.cnr.draw(
+                        guiBatch,
+                        "Press F to heal",
+                        50 - 2, Gdx.graphics.getHeight() - (height * 1.5f) - 2
+                );
+                Assets.fonts.cnr.setColor(1, 1, 1, 1);
                 Assets.fonts.cnr.draw(
                         guiBatch,
                         "Press F to heal",
@@ -62,6 +76,13 @@ public class HealthSystem implements System, Resetable {
         else {
             layout.setText(Assets.fonts.cnr, "Health: " + (int) player.getComponent(Health.class).getHealth());
             float height = layout.height;
+            Assets.fonts.cnr.setColor(0, 0, 0, 1);
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    "Health: " + (int) player.getComponent(Health.class).getHealth(),
+                    50 - 2, Gdx.graphics.getHeight() - (height * 1.5f) - 2
+            );
+            Assets.fonts.cnr.setColor(1, 1, 1, 1);
             Assets.fonts.cnr.draw(
                     guiBatch,
                     "Health: " + (int) player.getComponent(Health.class).getHealth(),

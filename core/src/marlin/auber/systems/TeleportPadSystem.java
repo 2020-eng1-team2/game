@@ -46,6 +46,13 @@ public class TeleportPadSystem implements System {
                                     .collect(Collectors.toList())
                     );
                 } else {
+                    Assets.fonts.cnr.setColor(0, 0, 0, 1);
+                    Assets.fonts.cnr.draw(
+                            guiBatch,
+                            "Press F to teleport",
+                            50 - 2, 50 - 2
+                    );
+                    Assets.fonts.cnr.setColor(1, 1, 1, 1);
                     Assets.fonts.cnr.draw(
                             guiBatch,
                             "Press F to teleport",
@@ -56,6 +63,13 @@ public class TeleportPadSystem implements System {
                     }
                 }
             } else {
+                Assets.fonts.cnr.setColor(0, 0, 0, 1);
+                Assets.fonts.cnr.draw(
+                        guiBatch,
+                        String.format("Teleport recharged in %.1f", player.teleportCooldown.getRemaining()),
+                        50 - 2, 50 - 2
+                );
+                Assets.fonts.cnr.setColor(1, 1, 1, 1);
                 Assets.fonts.cnr.draw(
                         guiBatch,
                         String.format("Teleport recharged in %.1f", player.teleportCooldown.getRemaining()),

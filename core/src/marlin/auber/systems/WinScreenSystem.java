@@ -19,6 +19,13 @@ public class WinScreenSystem implements System {
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             guiBatch.begin();
         }
+        Assets.fonts.cnr.setColor(0, 0, 0, 1);
+        Assets.fonts.cnr.draw(
+                guiBatch,
+                "You Win! Press F to return to menu",
+                48, 48
+        );
+        Assets.fonts.cnr.setColor(1, 1, 1, 1);
         Assets.fonts.cnr.draw(
                 guiBatch,
                 "You Win! Press F to return to menu",

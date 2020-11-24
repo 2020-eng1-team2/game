@@ -60,6 +60,13 @@ public class KeypadSystem implements System, Resetable {
                             break;
                         } else {
                             fixingPad = false;
+                            Assets.fonts.cnr.setColor(0, 0, 0, 1);
+                            Assets.fonts.cnr.draw(
+                                    guiBatch,
+                                    "Hold F to Fix Pad",
+                                    50 - 2, 50 - 2
+                            );
+                            Assets.fonts.cnr.setColor(1, 1, 1, 1);
                             Assets.fonts.cnr.draw(
                                     guiBatch,
                                     "Hold F to Fix Pad",
@@ -83,7 +90,7 @@ public class KeypadSystem implements System, Resetable {
                 // Draw fixing bar
                 shapeRenderer.setProjectionMatrix(World.getWorld().viewport.getCamera().combined);
                 shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-                shapeRenderer.setColor(0, 1, 0, 1);
+                shapeRenderer.setColor(0, 183, 100, 1);
                 shapeRenderer.rect(entPosition.x - 0.5f, entPosition.y + size.y * 1.05f, size.x - (size.x * (player.getComponent(ActivePlayerCharacter.class).keypadTime.getRemaining() / fixTime)), size.y / 10f);
                 shapeRenderer.end();
                 // End Beaming bar
@@ -99,6 +106,13 @@ public class KeypadSystem implements System, Resetable {
                     fixingPad = false;
                 }
                 else {
+                    Assets.fonts.cnr.setColor(0, 0, 0, 1);
+                    Assets.fonts.cnr.draw(
+                            guiBatch,
+                            "Fixing...",
+                            50 - 2, 50 - 2
+                    );
+                    Assets.fonts.cnr.setColor(1, 1, 1, 1);
                     Assets.fonts.cnr.draw(
                             guiBatch,
                             "Fixing...",

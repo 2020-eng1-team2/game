@@ -124,6 +124,13 @@ public class EventSystem implements System, Resetable {
             layout.setText(Assets.fonts.cnr, String.format("Time to meltdown: %.1f", player.meltdownTime.getRemaining()));
             float width = layout.width;
             float height = layout.height;
+            Assets.fonts.cnr.setColor(0, 0, 0, 1);
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    String.format("Time to meltdown: %.1f", player.meltdownTime.getRemaining()),
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f) - 2, (Gdx.graphics.getHeight() - (height * 1.5f)) - 2
+            );
+            Assets.fonts.cnr.setColor(1, 1, 1, 1);
             Assets.fonts.cnr.draw(
                     guiBatch,
                     String.format("Time to meltdown: %.1f", player.meltdownTime.getRemaining()),
@@ -135,6 +142,13 @@ public class EventSystem implements System, Resetable {
             layout.setText(Assets.fonts.cnr, "Find and Arrest the Infiltrator");
             float width = layout.width;
             float height = layout.height;
+            Assets.fonts.cnr.setColor(0, 0, 0, 1);
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    "Find and Arrest the Infiltrator",
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f) - 2, (Gdx.graphics.getHeight() - (height * 1.5f)) - 2
+            );
+            Assets.fonts.cnr.setColor(1, 1, 1, 1);
             Assets.fonts.cnr.draw(
                     guiBatch,
                     "Find and Arrest the Infiltrator",

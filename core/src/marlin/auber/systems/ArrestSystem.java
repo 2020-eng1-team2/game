@@ -116,6 +116,13 @@ public class ArrestSystem implements System {
         else if (!player.reload.isOver()) {
             layout.setText(Assets.fonts.cnr, "Reloading...");
             float width = layout.width;
+            Assets.fonts.cnr.setColor(0, 0, 0, 1);
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    "Reloading...",
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f) - 2, 50 - 2
+            );
+            Assets.fonts.cnr.setColor(1, 1, 1, 1);
             Assets.fonts.cnr.draw(
                     guiBatch,
                     "Reloading...",
@@ -181,6 +188,13 @@ public class ArrestSystem implements System {
             // beams left -1 because of bug
             layout.setText(Assets.fonts.cnr, "Beams left: " + (arrestBeam.beamsLeft() - 1));
             float width = layout.width;
+            Assets.fonts.cnr.setColor(0, 0, 0, 1);
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    "Beams left: " + (arrestBeam.beamsLeft() - 1),
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f) - 2, 50 - 2
+            );
+            Assets.fonts.cnr.setColor(1, 1, 1, 1);
             Assets.fonts.cnr.draw(
                     guiBatch,
                     "Beams left: " + (arrestBeam.beamsLeft() - 1),
@@ -190,6 +204,13 @@ public class ArrestSystem implements System {
         else if (arrestBeam.beamsLeft() <= 1 && player.reload.isOver()) {
             layout.setText(Assets.fonts.cnr, "Press R to reload");
             float width = layout.width;
+            Assets.fonts.cnr.setColor(0, 0, 0, 1);
+            Assets.fonts.cnr.draw(
+                    guiBatch,
+                    "Press R to reload",
+                    (Gdx.graphics.getWidth() * 0.5f) - (width * 0.5f) - 2, 50 - 2
+            );
+            Assets.fonts.cnr.setColor(1, 1, 1, 1);
             Assets.fonts.cnr.draw(
                     guiBatch,
                     "Press R to reload",
