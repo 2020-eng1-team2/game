@@ -56,6 +56,7 @@ public class EventSystem implements System, Resetable {
         ActivePlayerCharacter player = Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(ActivePlayerCharacter.class);
         if (startGame) {
             startGame = false;
+            Gdx.app.log("reset", "new game");
             player.eventCooldown.reset(eventCooldownTimer);
             player.abilityDuration.reset(abilityDurationTimer);
         }
@@ -262,5 +263,12 @@ public class EventSystem implements System, Resetable {
         }
         keypadFixed = true;
         infilArrested = true;
+        keypadLastFrame = true;
+        infiltratorLastFrame = true;
+        startGame = true;
+        startEvent = false;
+        eventPart1 = false;
+        toggleAbility = false;
+        abilityOn = false;
     }
 }

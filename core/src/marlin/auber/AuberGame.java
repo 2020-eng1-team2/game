@@ -323,6 +323,11 @@ public class AuberGame extends ApplicationAdapter {
 			ent.destroy();
 		}
 
+		// Destroy arrested infiltrators
+		for (Entity ent : Entity.getAllEntitiesWithComponents(CellNPCAI.class)) {
+			ent.destroy();
+		}
+
 		// Create new Auber
 		Entity.create(
 				"auber",
