@@ -37,6 +37,7 @@ public class EventSystem implements System, Resetable {
     private boolean startGame = true;
     private boolean toggleAbility = false;
     private boolean abilityOn = false;
+    private int lastInfiltratorNum = 0;
 
     private final float meltdownTimer = 60f;
     private final float eventCooldownTimer = 15f;
@@ -222,7 +223,7 @@ public class EventSystem implements System, Resetable {
         Random random = new Random();
         int rng = random.nextInt(4);
          Entity infil = Entity.create(
-                "Infiltrator",
+                "Infiltrator" + lastInfiltratorNum++,
                 new Position(max),
                 new AABB((883f/637f), 2.25f, AABB.TAG_RENDER | AABB.TAG_COLLISION_X_ONLY),
                 new Walking(),
