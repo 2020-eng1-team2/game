@@ -15,7 +15,6 @@ import java.util.Random;
 
 // TODO: Think i fixed 60 second bug, needs testing
 // TODO: Fix infiltrator despawning on keypad fix
-// TODO: Reset aubers movement speed if stun infiltrator is arrested while stunned
 public class EventSystem implements System, Resetable {
 
     /**
@@ -61,6 +60,8 @@ public class EventSystem implements System, Resetable {
             player.eventCooldown.reset(eventCooldownTimer);
             player.abilityDuration.reset(abilityDurationTimer);
         }
+
+        // Start ability activation
         if (player.abilityDuration.isOver() && abilityOn) {
             abilityOn = false;
             toggleAbility = true;
@@ -85,6 +86,7 @@ public class EventSystem implements System, Resetable {
                 }
             }
         }
+
         // Update event status
         updateArrests();
         updateKeypad();

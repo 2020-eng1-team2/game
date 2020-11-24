@@ -200,6 +200,10 @@ public class ArrestSystem implements System {
             // we attach CellNPCAI, otherwise they'll walk out of prison (through the wall)
             ent.removeComponent(NPCAI.class);
             ent.removeComponent(Infiltrator.class);
+            if (ent.hasComponent(StunAbility.class)) {
+                // Reset Auber movement speed if ent gets arrested while stun ability is active
+                Entity.getAllEntitiesWithComponents(ActivePlayerCharacter.class).get(0).getComponent(KeyboardMovement.class).movementSpeed = 3.0f;
+            }
             ent.attachComponent(new CellNPCAI(3.0f));
         }
         else {
