@@ -4,7 +4,8 @@ import marlin.auber.common.Component;
 
 public class SpeedAbility extends Component {
     public void toggleAbility() {
-        float defaultSpeed = this.parent.getComponent(NPCAI.class).movementSpeed;
+        // late bug fix VV
+        float defaultSpeed = 3f;
         if (this.parent.getComponent(NPCAI.class).movementSpeed == defaultSpeed) {
             // Speed up
             this.parent.getComponent(NPCAI.class).movementSpeed = defaultSpeed + 1f;
