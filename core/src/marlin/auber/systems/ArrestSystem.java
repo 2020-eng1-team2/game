@@ -96,6 +96,14 @@ public class ArrestSystem implements System {
                             // Can only arrest one NPC per beam
                             break;
                         }
+                        else {
+                            // y is out of bounds
+                            arresting = false;
+                        }
+                    }
+                    else {
+                        // x is out of bounds
+                        arresting = false;
                     }
                 }
             }
@@ -152,6 +160,14 @@ public class ArrestSystem implements System {
                             }
                         }
                     }
+                    else {
+                        // y is out of bounds
+                        arresting = false;
+                    }
+                }
+                else {
+                    // x is out of bounds
+                    arresting = false;
                 }
             }
             else {
@@ -210,6 +226,7 @@ public class ArrestSystem implements System {
             }
             // No need to reset movement speed as that is now handled by CellNPCAI rather than NPCAI
             ent.attachComponent(new CellNPCAI(3.0f));
+            Entity.getAllEntitiesWithComponents(Score.class).get(0).getComponent(Score.class).addScore();
         }
         else {
             // Innocent

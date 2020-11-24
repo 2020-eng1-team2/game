@@ -63,7 +63,8 @@ public class AuberGame extends ApplicationAdapter {
 				new ViewportTarget(),
 				new ActivePlayerCharacter(),
 				new ArrestBeam(),
-				new Health()
+				new Health(),
+				new Score()
 		);
 
 		for (int i = 0; i < 10; i++) {
@@ -338,7 +339,8 @@ public class AuberGame extends ApplicationAdapter {
 				new ViewportTarget(),
 				new ActivePlayerCharacter(),
 				new ArrestBeam(),
-				new Health()
+				new Health(),
+				new Score()
 		);
 
 		// Create new NPCs
