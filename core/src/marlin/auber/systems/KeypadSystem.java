@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import marlin.auber.common.Assets;
 import marlin.auber.common.Entity;
+import marlin.auber.common.Resetable;
 import marlin.auber.common.System;
 import marlin.auber.components.ActivePlayerCharacter;
 import marlin.auber.components.Health;
@@ -14,7 +15,7 @@ import marlin.auber.components.KeypadTarget;
 import marlin.auber.components.Position;
 import marlin.auber.models.World;
 
-public class KeypadSystem implements System {
+public class KeypadSystem implements System, Resetable {
     private final SpriteBatch guiBatch = new SpriteBatch();
     private final ShapeRenderer shapeRenderer = new ShapeRenderer();
     private boolean fixingPad = false;
@@ -109,4 +110,12 @@ public class KeypadSystem implements System {
                 guiBatch.end();
             }
         }
+
+    @Override
+    public void reset() {
+        // Fix all keypads
+        for (Entity ent : Entity.getAllEntitiesWithComponents(KeypadTarget.class)) {
+            ent.getComponent(KeypadTarget.class).fixPad();
+        }
     }
+}

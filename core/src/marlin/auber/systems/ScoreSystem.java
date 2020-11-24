@@ -1,10 +1,11 @@
 package marlin.auber.systems;
 
 import marlin.auber.common.Entity;
+import marlin.auber.common.Resetable;
 import marlin.auber.common.System;
 import marlin.auber.components.Score;
 
-public class ScoreSystem implements System {
+public class ScoreSystem implements System, Resetable {
     private float score = 0;
 
     /**
@@ -20,5 +21,10 @@ public class ScoreSystem implements System {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void reset() {
+        this.score = 0;
     }
 }
