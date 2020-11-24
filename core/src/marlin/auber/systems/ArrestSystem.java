@@ -31,8 +31,6 @@ public class ArrestSystem implements System {
     private float sHeight;
     private float sWidth;
 
-    // TODO: Fix firing beam in teleport screen
-
     /**
      * Used to set the reload timer once when wither reload button is pressed, or ammo goes down to zero.
      */
